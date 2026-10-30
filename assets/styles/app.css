@@ -1,0 +1,455 @@
+/* BinkTime · charte « Noir & Or » (docs/maquettes/charte-graphique.png) */
+
+:root {
+    --onyx: #0a0a0b;
+    --ebene: #0e0e10;
+    --graphite: #111113;
+    --or: #c9a96e;
+    --or-clair: #e6cf9f;
+    --or-bruni: #8a6e3b;
+    --ivoire: #f3eee5;
+    --pierre: #cfc9be;
+    --taupe: #a39e94;
+    --filet: rgba(201, 169, 110, 0.22);
+    --filet-fort: rgba(201, 169, 110, 0.35);
+    --filet-neutre: rgba(243, 238, 229, 0.08);
+
+    --serif: 'Cormorant Garamond', Garamond, 'Times New Roman', serif;
+    --sans: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+    --gutter: clamp(16px, 4vw, 64px);
+    --max: 1200px;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+    color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    margin: 0;
+    background: var(--onyx);
+    color: var(--pierre);
+    font: 400 16px/1.6 var(--sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+img,
+svg {
+    display: block;
+    max-width: 100%;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+::selection {
+    background: var(--or);
+    color: var(--onyx);
+}
+
+:focus-visible {
+    outline: 1px solid var(--or);
+    outline-offset: 3px;
+}
+
+/* Typographie */
+
+h1,
+h2,
+h3 {
+    margin: 0;
+    color: var(--ivoire);
+    font-family: var(--serif);
+    font-weight: 300;
+    letter-spacing: -0.01em;
+}
+
+.h1 {
+    font-size: clamp(48px, 7vw, 98px);
+    line-height: 0.98;
+}
+
+.h2 {
+    font-size: clamp(36px, 4.6vw, 64px);
+    line-height: 1.05;
+}
+
+.h3 {
+    margin: 0;
+    color: var(--ivoire);
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+/* La chute d'une phrase, en italique or */
+.chute {
+    color: var(--or);
+    font-style: italic;
+}
+
+.lead {
+    max-width: 34em;
+    margin: 0;
+    font-size: clamp(16px, 1.3vw, 18px);
+}
+
+.label {
+    color: var(--taupe);
+    font: 500 12px/1.4 var(--sans);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.label--or {
+    color: var(--or);
+}
+
+/* Surtitre de section : un filet puis l'étiquette */
+.kicker {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 0 0 28px;
+}
+
+.kicker::before {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--or);
+}
+
+.roman {
+    color: var(--or);
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+}
+
+.num {
+    font-family: var(--serif);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Mise en page */
+
+.wrap {
+    width: 100%;
+    max-width: calc(var(--max) + 2 * var(--gutter));
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+}
+
+.section {
+    padding: clamp(72px, 10vw, 140px) 0;
+}
+
+.section--ebene {
+    background: var(--ebene);
+    border-block: 1px solid var(--filet-neutre);
+}
+
+.rule {
+    height: 1px;
+    margin: 0;
+    border: 0;
+    background: var(--filet);
+}
+
+/* Logo */
+
+.logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--ivoire);
+    font: 400 22px/1 var(--serif);
+    letter-spacing: 0.01em;
+}
+
+.logo svg {
+    width: 20px;
+    height: 20px;
+    color: var(--or);
+}
+
+/* En-tête */
+
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(10, 10, 11, 0.86);
+    border-bottom: 1px solid var(--filet-neutre);
+    backdrop-filter: blur(10px);
+}
+
+.site-header .wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    min-height: 72px;
+}
+
+.nav {
+    display: flex;
+    gap: clamp(16px, 2.6vw, 36px);
+}
+
+.nav a {
+    color: var(--pierre);
+    font: 500 11px/1 var(--sans);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transition: color 0.2s var(--ease);
+}
+
+.nav a:hover {
+    color: var(--or-clair);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+@media (max-width: 860px) {
+    .nav,
+    .header-actions .badge {
+        display: none;
+    }
+}
+
+/* Boutons : angles quasi droits sur le site, pilule pour l'horloge */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-height: 44px;
+    padding: 0 22px;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    font: 600 11px/1 var(--sans);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.btn--or {
+    background: var(--or);
+    color: var(--onyx);
+}
+
+.btn--or:hover {
+    background: var(--or-clair);
+}
+
+.btn--ligne {
+    background: transparent;
+    border-color: rgba(243, 238, 229, 0.4);
+    color: var(--ivoire);
+}
+
+.btn--ligne:hover {
+    border-color: var(--or);
+    color: var(--or-clair);
+}
+
+.btn--pilule {
+    border-radius: 999px;
+    padding: 0 40px;
+}
+
+.btn--rond {
+    width: 44px;
+    padding: 0;
+    border-color: rgba(243, 238, 229, 0.3);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--ivoire);
+}
+
+.btn--rond:hover {
+    border-color: var(--or);
+    color: var(--or);
+}
+
+.btn--sm {
+    min-height: 36px;
+    padding: 0 18px;
+}
+
+/* Badges et repères */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border: 1px solid var(--filet-fort);
+    border-radius: 999px;
+    color: var(--or);
+    font: 500 10px/1 var(--sans);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.badge--point {
+    padding: 0;
+    border: 0;
+}
+
+.badge--point::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.badge--pause {
+    color: var(--taupe);
+}
+
+.losange {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    background: var(--or);
+    transform: rotate(45deg);
+}
+
+/* Cartes : double filet doré */
+
+.card {
+    position: relative;
+    padding: clamp(20px, 3vw, 32px);
+    background: var(--graphite);
+    border: 1px solid var(--filet);
+}
+
+.card--double {
+    outline: 1px solid var(--filet);
+    outline-offset: -7px;
+}
+
+.data {
+    display: grid;
+    gap: 6px;
+}
+
+.data__value {
+    color: var(--ivoire);
+    font: 400 clamp(26px, 3vw, 34px)/1.1 var(--serif);
+}
+
+/* Tableau : ligne active surlignée d'or */
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.table th {
+    padding: 12px 14px;
+    color: var(--taupe);
+    font: 500 10px/1 var(--sans);
+    letter-spacing: 0.2em;
+    text-align: right;
+    text-transform: uppercase;
+}
+
+.table td {
+    padding: 14px;
+    border-top: 1px solid var(--filet-neutre);
+    color: var(--taupe);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.table th:first-child,
+.table td:first-child {
+    text-align: left;
+}
+
+.table .is-active td {
+    background: rgba(201, 169, 110, 0.08);
+    border-block: 1px solid var(--filet-fort);
+    color: var(--ivoire);
+}
+
+.table .is-active td:first-child {
+    color: var(--or);
+}
+
+/* Barre de progression en trait fin */
+
+.progress {
+    position: relative;
+    height: 2px;
+    background: var(--filet-neutre);
+}
+
+.progress span {
+    position: absolute;
+    inset: 0 auto 0 0;
+    background: var(--or);
+    transition: width 1s linear;
+}
+
+/* Pied de page */
+
+.site-footer {
+    border-top: 1px solid var(--filet-neutre);
+}
+
+.site-footer .wrap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-block: 28px;
+}
+
+.site-footer .logo {
+    font-size: 18px;
+}
+
+.site-footer small {
+    color: var(--taupe);
+    font-size: 12px;
+}
+
+.site-footer a.label--or:hover {
+    color: var(--or-clair);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}

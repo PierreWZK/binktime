@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{# Étape 1 : planche de la charte, remplacée par la vraie page d'accueil à l'étape 3 #}
+{% block body %}
+    <section class="section">
+        <div class="wrap">
+            <p class="kicker label label--or">Charte graphique · V1</p>
+            <h1 class="h1">Réglés comme <span class="chute">une horloge.</span></h1>
+        </div>
+    </section>
+
+    <section class="section section--ebene">
+        <div class="wrap" style="display:grid;gap:56px">
+            <div>
+                <h2 class="h2">Chaque place <span class="chute">compte.</span></h2>
+                <p class="h3" style="margin-top:24px">Structure des blindes</p>
+                <p class="lead" style="margin-top:16px">Inscriptions, structure des blindes, horloge plein écran, éliminations, recaves et calcul des gains.</p>
+                <p class="label label--or" style="margin-top:16px">Prochain niveau</p>
+            </div>
+
+            <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center">
+                <a class="btn btn--or" href="#">Créer un tournoi</a>
+                <a class="btn btn--ligne" href="#">Voir l'horloge</a>
+                <button class="btn btn--or btn--pilule" type="button">Pause</button>
+                <button class="btn btn--rond" type="button" aria-label="Niveau suivant">›</button>
+            </div>
+
+            <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:center">
+                <span class="badge">À venir</span>
+                <span class="badge badge--point">En cours</span>
+                <span class="badge badge--point badge--pause">En pause</span>
+                <span class="roman" style="font-size:28px">I II III</span>
+                <span class="losange"></span>
+            </div>
+
+            <div style="display:grid;gap:24px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+                <div class="card card--double data">
+                    <span class="label">Blindes</span>
+                    <span class="data__value">400 / 800</span>
+                </div>
+                <div class="card" style="padding:0">
+                    <table class="table">
+                        <thead><tr><th>Niveau</th><th>Petite</th><th>Grosse</th><th>Ante</th></tr></thead>
+                        <tbody>
+                            <tr><td>VI</td><td>300</td><td>600</td><td>75</td></tr>
+                            <tr class="is-active"><td>VII · en cours</td><td>400</td><td>800</td><td>100</td></tr>
+                            <tr><td>VIII</td><td>500</td><td>1 000</td><td>100</td></tr>
+                        </tbody>
+                    </table>
+                    <div class="progress"><span style="width:38%"></span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

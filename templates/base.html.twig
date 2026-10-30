@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}BinkTime · Vos tournois de poker, réglés comme une horloge{% endblock %}</title>
+        <meta name="description" content="{% block description %}Inscriptions, structure des blindes, horloge plein écran, éliminations, recaves et calcul des gains. BinkTime tient aussi le classement de la saison.{% endblock %}">
+        <meta name="theme-color" content="#0A0A0B">
+        <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@400;500;600&display=swap">
+        {% block head %}{% endblock %}
+        {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% endblock %}
+    </head>
+    <body class="{% block body_class %}{% endblock %}">
+        {% block header %}
+            <header class="site-header">
+                <div class="wrap">
+                    <a class="logo" href="{{ path('home') }}" aria-label="BinkTime, accueil">{% include '_logo.html.twig' %}BinkTime</a>
+                    <nav class="nav" aria-label="Navigation principale">
+                        <a href="{{ path('home') }}#programme">Programme</a>
+                        <a href="{{ path('home') }}#horloge">L'horloge</a>
+                        <a href="{{ path('home') }}#saison">Saison</a>
+                        <a href="{{ path('home') }}#installer">Installer</a>
+                    </nav>
+                    <div class="header-actions">
+                        <span class="badge">À venir</span>
+                        <a class="btn btn--or btn--sm" href="{{ path('home') }}">Créer un tournoi</a>
+                    </div>
+                </div>
+            </header>
+        {% endblock %}
+
+        <main>{% block body %}{% endblock %}</main>
+
+        {% block footer %}
+            <footer class="site-footer">
+                <div class="wrap">
+                    <span class="logo">{% include '_logo.html.twig' %}BinkTime <small>Symfony · Twig · MySQL</small></span>
+                    <a class="label label--or" href="https://projectp.fr/">Jour 17 · 30 jours, 30 projets</a>
+                </div>
+            </footer>
+        {% endblock %}
+    </body>
+</html>
