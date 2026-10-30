@@ -26,6 +26,7 @@
                         <a href="{{ path('home') }}#horloge">L'horloge</a>
                         <a href="{{ path('home') }}#saison">Saison</a>
                         <a href="{{ path('organizer_index') }}">Établissements</a>
+                        <a href="{{ path('game_daily') }}">Jeu du jour</a>
                     </nav>
                     <div class="header-actions">
                         {% if app.user %}
@@ -41,6 +42,7 @@
                                 <a href="{{ path('home') }}#horloge">L'horloge</a>
                                 <a href="{{ path('home') }}#saison">Saison</a>
                                 <a href="{{ path('organizer_index') }}">Établissements</a>
+                                <a href="{{ path('game_daily') }}">Jeu du jour</a>
                                 <a href="{{ app.user ? path('organizer_dashboard') : path('app_login') }}">{{ app.user ? 'Mon espace' : 'Connexion' }}</a>
                                 <a class="menu__cta" href="{{ path('tournament_new') }}">Créer un tournoi</a>
                             </nav>

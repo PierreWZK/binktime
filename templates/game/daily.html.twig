@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Compte du tapis #{{ stack.number }} · Jeu du jour · BinkTime{% endblock %}
+{% block description %}Le jeu du jour de BinkTime : un tapis de jetons s'affiche {{ reveal }} secondes, retrouvez son total en {{ attempts }} essais. Le même tapis pour tout le monde.{% endblock %}
+
+{% block body %}
+    <section class="section section--tight">
+        <div class="wrap game" data-game data-game-config="{{ {number: stack.number, date: stack.date, total: stack.total, attempts: attempts, reveal: reveal}|json_encode }}">
+            <div class="game__intro">
+                <p class="kicker label label--or">Jeu du jour · n° {{ stack.number }}</p>
+                <h1 class="h2">Compte <span class="chute">du tapis.</span></h1>
+                <p class="lead">Un tapis s'affiche <strong>{{ reveal }} secondes</strong>. Retrouvez son total en {{ attempts }} essais : à chaque erreur, on vous dit si c'est plus ou moins. Le même tapis pour tout le monde, un nouveau chaque jour à minuit.</p>
+                <dl class="game__stats">
+                    <div><dt class="label">Série</dt><dd class="num"><span data-g="streak">0</span> <span aria-hidden="true">🔥</span></dd></div>
+                    <div><dt class="label">Record</dt><dd class="num" data-g="best">0</dd></div>
+                    <div><dt class="label">Parties</dt><dd class="num" data-g="played">0</dd></div>
+                </dl>
+            </div>
+
+            <div class="card card--double game__table">
+                <div class="felt" data-g="felt">
+                    <div class="piles" aria-hidden="true">
+                        {% for pile in stack.piles %}
+                            <div class="pile" style="--n: {{ pile.count }}">
+                                {% for i in 1..pile.count %}<span class="chip-token chip-token--{{ pile.color }}"></span>{% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="felt__cover" data-g="cover">
+                        <span class="finale__mark">{% include '_logo.html.twig' %}</span>
+                        <p class="felt__title" data-g="coverTitle">Prêt à compter ?</p>
+                        <p class="felt__text" data-g="coverText">Le tapis reste visible {{ reveal }} secondes, une seule fois.</p>
+                        <button class="btn btn--or" type="button" data-g="revealBtn">Révéler le tapis</button>
+                    </div>
+                    <div class="progress felt__timer" data-g="timer" hidden><span></span></div>
+                </div>
+
+                <ul class="legend" aria-label="Valeur des jetons">
+                    {% for value, color in chips %}
+                        <li><span class="chip-token chip-token--{{ color }} chip-token--flat"></span>{{ value|chips }}</li>
+                    {% endfor %}
+                </ul>
+
+                <form class="guess" data-g="form" hidden>
+                    <label class="label" for="guess">Le total du tapis</label>
+                    <div class="secret__row">
+                        <input id="guess" name="guess" inputmode="numeric" autocomplete="off" placeholder="ex. 12 450" required>
+                        <button class="btn btn--or" type="submit">Valider</button>
+                    </div>
+                    <p class="field__hint"><span data-g="left">{{ attempts }}</span> essai(s) restant(s) · multiples de 25</p>
+                </form>
+
+                <ol class="guesses" data-g="guesses" aria-live="polite"></ol>
+
+                <div class="result" data-g="result" hidden>
+                    <p class="result__title" data-g="resultTitle"></p>
+                    <p class="result__text" data-g="resultText"></p>
+                    <div class="actions">
+                        <button class="btn btn--or" type="button" data-g="share">Partager le résultat</button>
+                        <a class="btn btn--ligne" href="{{ path('tournament_new') }}">Créer un tournoi</a>
+                    </div>
+                    <p class="note">Prochain tapis dans <span data-g="next">—</span>.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

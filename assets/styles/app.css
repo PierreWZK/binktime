@@ -46,6 +46,11 @@ body {
     text-rendering: optimizeLegibility;
 }
 
+/* hidden doit gagner sur les display: grid/flex des composants */
+[hidden] {
+    display: none !important;
+}
+
 img,
 svg {
     display: block;
@@ -232,7 +237,7 @@ h3 {
     gap: 12px;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 1100px) {
     .nav,
     .header-actions .badge {
         display: none;
@@ -1008,7 +1013,7 @@ code {
     }
 }
 
-@media (max-width: 860px) {
+@media (max-width: 1100px) {
     .menu {
         display: block;
     }
@@ -1820,6 +1825,288 @@ select {
         grid-column: 2;
         justify-self: start;
         text-align: left;
+    }
+}
+
+/* ---------- Jeu du jour : Compte du tapis ---------- */
+
+.game {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(32px, 6vw, 96px);
+    align-items: start;
+}
+
+.game__intro {
+    display: grid;
+    gap: 24px;
+}
+
+.game__intro .kicker {
+    margin: 0;
+}
+
+.game__intro strong {
+    color: var(--ivoire);
+    font-weight: 600;
+}
+
+.game__stats {
+    display: flex;
+    gap: 40px;
+    margin: 8px 0 0;
+    padding-top: 24px;
+    border-top: 1px solid var(--filet);
+}
+
+.game__stats dd {
+    margin: 8px 0 0;
+    color: var(--ivoire);
+    font: 400 32px/1 var(--serif);
+}
+
+.game__table {
+    display: grid;
+    gap: 24px;
+}
+
+/* La table : un tapis feutré très sombre, les piles au centre */
+.felt {
+    position: relative;
+    display: grid;
+    place-items: end center;
+    min-height: 300px;
+    padding: 40px 24px 36px;
+    overflow: hidden;
+    border: 1px solid var(--filet);
+    background:
+        radial-gradient(ellipse at 50% 120%, rgba(201, 169, 110, 0.1), transparent 60%),
+        var(--onyx);
+}
+
+.piles {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-end;
+    gap: clamp(14px, 3vw, 36px);
+    visibility: hidden;
+}
+
+.felt.is-revealing .piles,
+.felt.is-done .piles {
+    visibility: visible;
+}
+
+.pile {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+}
+
+/* Un jeton vu de profil : la tranche et ses inserts */
+.chip-token {
+    --face: #f3eee5;
+    --edge: #0a0a0b;
+    display: block;
+    width: 76px;
+    height: 14px;
+    margin-top: -2px;
+    border-radius: 3px / 6px;
+    background: repeating-linear-gradient(90deg, var(--face) 0 9px, var(--edge) 9px 14px);
+    box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.35), 0 1px 0 rgba(0, 0, 0, 0.6);
+}
+
+.pile .chip-token:nth-child(3n + 1) {
+    transform: translateX(1px);
+}
+
+.pile .chip-token:nth-child(4n + 2) {
+    transform: translateX(-2px);
+}
+
+.chip-token--ivoire {
+    --face: #f3eee5;
+    --edge: #8a6e3b;
+}
+
+.chip-token--rouge {
+    --face: #8e2b2b;
+    --edge: #f3eee5;
+}
+
+.chip-token--vert {
+    --face: #2f5d46;
+    --edge: #f3eee5;
+}
+
+.chip-token--noir {
+    --face: #1b1b1e;
+    --edge: #c9a96e;
+}
+
+.chip-token--or {
+    --face: #c9a96e;
+    --edge: #0a0a0b;
+}
+
+/* Vu de dessus, pour la légende */
+.chip-token--flat {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    border: 3px dashed var(--edge);
+    border-radius: 50%;
+    background: var(--face);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5);
+}
+
+.felt__cover {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 14px;
+    padding: 24px;
+    background: var(--graphite);
+    text-align: center;
+}
+
+.felt.is-revealing .felt__cover,
+.felt.is-done .felt__cover {
+    visibility: hidden;
+}
+
+.felt__cover .finale__mark svg {
+    width: 32px;
+    height: 32px;
+    color: var(--or);
+}
+
+.felt__title {
+    margin: 0;
+    color: var(--ivoire);
+    font: 400 32px/1.1 var(--serif);
+}
+
+.felt__text {
+    max-width: 26em;
+    margin: 0;
+    color: var(--taupe);
+    font-size: 13px;
+}
+
+.felt__timer {
+    position: absolute;
+    inset: auto 0 0;
+}
+
+.felt__timer span {
+    width: 100%;
+    transition: none;
+}
+
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px 24px;
+    margin: 0;
+    padding: 0;
+    color: var(--pierre);
+    font: 400 18px/1 var(--serif);
+    list-style: none;
+}
+
+.legend li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.guess {
+    display: grid;
+    gap: 10px;
+}
+
+.guess input {
+    font: 400 24px/1 var(--serif);
+}
+
+.guesses {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.guesses:empty {
+    display: none;
+}
+
+.guesses li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 12px 16px;
+    border: 1px solid var(--filet-neutre);
+    color: var(--ivoire);
+    font: 400 22px/1 var(--serif);
+}
+
+.guesses li span {
+    color: var(--taupe);
+    font: 500 11px/1 var(--sans);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.guesses li.is-hit {
+    border-color: var(--or);
+    background: rgba(201, 169, 110, 0.08);
+}
+
+.guesses li.is-hit span {
+    color: var(--or);
+}
+
+.guesses li.is-close span {
+    color: var(--or-clair);
+}
+
+.result {
+    display: grid;
+    gap: 14px;
+    padding-top: 8px;
+    border-top: 1px solid var(--filet);
+}
+
+.result__title {
+    margin: 12px 0 0;
+    color: var(--or);
+    font: italic 400 34px/1.1 var(--serif);
+}
+
+.result__text {
+    margin: 0;
+}
+
+@media (max-width: 960px) {
+    .game {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 520px) {
+    .pile .chip-token {
+        width: 52px;
+        height: 11px;
+    }
+
+    .felt {
+        min-height: 260px;
     }
 }
 

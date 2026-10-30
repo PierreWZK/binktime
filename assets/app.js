@@ -1,8 +1,12 @@
 import './styles/app.css';
 import { initClock } from './clock.js';
+import { initGame } from './game.js';
 
 const clock = document.querySelector('[data-clock]');
 if (clock) initClock(clock);
+
+const game = document.querySelector('[data-game]');
+if (game) initGame(game);
 
 const fmt = (n) => n.toLocaleString('fr-FR').replace(/\s/g, ' ');
 const roman = (n) => ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'][n] ?? String(n);
