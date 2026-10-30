@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ t.name }} · Horloge · BinkTime{% endblock %}
+
+{% block head %}
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="referrer" content="no-referrer">
+{% endblock %}
+
+{% block body_class %}clock-page{% endblock %}
+{% block header %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% macro time(seconds) %}{{ '%02d:%02d'|format(seconds // 60, seconds % 60) }}{% endmacro %}
+
+{% block body %}
+    {% import _self as m %}
+    {% set s = state %}
+    <div class="clock{{ remote ? ' clock--remote' }}" data-clock
+         data-state-url="{{ path('clock_state', {token: t.publicToken}) }}"
+         {% if remote %}data-action-url="{{ path('clock_action', {token: t.adminToken, action: 'toggle'}) }}"{% endif %}
+         data-state="{{ s|json_encode }}">
+
+        <header class="clock__top">
+            <div class="clock__brand">
+                <a class="logo" href="{{ remote ? path('tournament_admin', {token: t.adminToken}) : path('home') }}">{% include '_logo.html.twig' %}BinkTime</a>
+                <span class="label clock__name">{{ t.name }}</span>
+            </div>
+            <div class="clock__tools">
+                <span class="badge badge--point" data-k="status">En cours</span>
+                <button class="tool" type="button" data-sound aria-pressed="false" title="Son à chaque changement de niveau">Son</button>
+                <button class="tool" type="button" data-fullscreen title="Plein écran">Plein écran</button>
+            </div>
+        </header>
+
+        <div class="clock__main">
+            <dl class="clock__side">
+                <div class="clock__stat"><dt class="label">Joueurs restants</dt><dd><span data-k="playersLeft">{{ s.playersLeft }}</span> <small>/ <span data-k="entrants">{{ s.entrants }}</span></small></dd></div>
+                <div class="clock__stat"><dt class="label">Tapis moyen</dt><dd data-k="averageStack">{{ s.averageStack|chips }}</dd></div>
+                <div class="clock__stat"><dt class="label">Recaves · add-ons</dt><dd><span data-k="rebuys">{{ s.rebuys }}</span> · <span data-k="addons">{{ s.addons }}</span></dd></div>
+            </dl>
+
+            <div class="clock__center">
+                <p class="clock__level" data-k="levelLabel">{{ s.level ? (s.level.isBreak ? 'Pause' : 'Niveau ' ~ s.level.roman) }}</p>
+                <p class="clock__time num" data-k="time" role="timer" aria-live="off">{{ m.time(s.remaining) }}</p>
+                <div class="progress clock__progress"><span data-k="progress"></span></div>
+                <div class="clock__blinds">
+                    <div>
+                        <p class="label">Blindes</p>
+                        <p class="clock__big num" data-k="blinds">{{ s.level and not s.level.isBreak ? s.level.small|chips ~ ' / ' ~ s.level.big|chips : '—' }}</p>
+                    </div>
+                    <div class="clock__ante">
+                        <p class="label">Ante</p>
+                        <p class="clock__big clock__big--soft num" data-k="ante">{{ s.level and s.level.ante ? s.level.ante|chips : '—' }}</p>
+                    </div>
+                </div>
+                <p class="clock__winner" data-k="winner" hidden></p>
+            </div>
+
+            <dl class="clock__side clock__side--right">
+                <div class="clock__stat"><dt class="label">Prochain niveau</dt><dd data-k="next">{{ s.next ? s.next.small|chips ~ ' / ' ~ s.next.big|chips : '—' }}</dd></div>
+                <div class="clock__stat"><dt class="label">Prize pool</dt><dd><span data-k="prizePool">{{ s.prizePool }}</span> €</dd></div>
+                <div class="clock__stat"><dt class="label" data-k="thirdLabel">Places payées</dt><dd data-k="third">{{ s.paidPlaces }}</dd></div>
+            </dl>
+        </div>
+
+        {% if remote %}
+            <footer class="clock__controls">
+                <button class="btn btn--rond btn--lg" type="button" data-action="prev" aria-label="Niveau précédent">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
+                </button>
+                <button class="btn btn--or btn--pilule btn--lg clock__toggle" type="button" data-action="toggle">Lancer</button>
+                <button class="btn btn--rond btn--lg" type="button" data-action="next" aria-label="Niveau suivant">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+                </button>
+            </footer>
+            <p class="clock__hint">
+                Espace : pause · ← → : niveaux ·
+                <a class="link" href="{{ path('clock_public', {token: t.publicToken}) }}" target="_blank">ouvrir l'affichage pour la télé</a>
+            </p>
+            <p class="clock__error" data-k="error" role="alert" hidden></p>
+        {% endif %}
+    </div>
+{% endblock %}

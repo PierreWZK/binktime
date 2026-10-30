@@ -1484,6 +1484,15 @@ input[type='datetime-local']::-webkit-calendar-picker-indicator {
     font-size: 26px;
 }
 
+.clock-card {
+    display: grid;
+    gap: 12px;
+}
+
+.clock-card__main {
+    margin: 10px 0 12px;
+}
+
 .payouts-form {
     display: grid;
     gap: 10px;
@@ -1557,6 +1566,293 @@ input[type='datetime-local']::-webkit-calendar-picker-indicator {
 
     .winner {
         flex-wrap: wrap;
+    }
+}
+
+/* ---------- Horloge plein écran ---------- */
+
+.clock-page {
+    overflow-x: hidden;
+}
+
+.clock {
+    display: grid;
+    grid-template-rows: auto 1fr auto auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+    margin: 0;
+    padding: clamp(16px, 2.6vw, 40px) clamp(20px, 3.8vw, 56px);
+    border: 1px solid var(--filet-neutre);
+    outline: clamp(10px, 1.4vw, 20px) solid var(--onyx);
+    outline-offset: 0;
+}
+
+.clock__top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px 32px;
+}
+
+.clock__brand {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    min-width: 0;
+}
+
+.clock__name {
+    overflow: hidden;
+    color: var(--taupe);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.clock__name::before {
+    content: '[';
+}
+
+.clock__name::after {
+    content: ']';
+}
+
+.clock__tools {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.clock__tools .badge {
+    font-size: 11px;
+}
+
+.tool {
+    min-height: 32px;
+    padding: 0 12px;
+    border: 1px solid rgba(243, 238, 229, 0.14);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--taupe);
+    font: 500 10px/1 var(--sans);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.2s var(--ease), border-color 0.2s var(--ease), opacity 0.4s var(--ease);
+}
+
+.tool:hover,
+.tool[aria-pressed='true'] {
+    border-color: var(--filet-fort);
+    color: var(--or);
+}
+
+/* Sur la télé, les outils s'effacent quand la souris ne bouge plus */
+.clock.is-idle .tool {
+    opacity: 0;
+}
+
+.clock__main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2.4fr) minmax(0, 1fr);
+    gap: clamp(20px, 3vw, 56px);
+    align-items: center;
+    padding: clamp(24px, 4vh, 56px) 0;
+}
+
+.clock__side {
+    display: grid;
+    margin: 0;
+}
+
+.clock__stat {
+    display: grid;
+    gap: 8px;
+    padding: clamp(14px, 2.4vh, 26px) 0;
+    border-bottom: 1px solid var(--filet);
+}
+
+.clock__side .clock__stat:first-child {
+    border-top: 1px solid var(--filet);
+}
+
+.clock__stat dt {
+    font-size: clamp(10px, 0.9vw, 13px);
+}
+
+.clock__stat dd {
+    margin: 0;
+    color: var(--ivoire);
+    font: 400 clamp(28px, 3.3vw, 52px)/1 var(--serif);
+    font-variant-numeric: tabular-nums;
+}
+
+.clock__stat small {
+    color: var(--taupe);
+    font-size: 0.55em;
+}
+
+.clock__side--right {
+    text-align: right;
+}
+
+.clock__center {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+}
+
+.clock__level {
+    margin: 0;
+    color: var(--or);
+    font: italic 400 clamp(26px, 3vw, 46px)/1 var(--serif);
+}
+
+.clock__time {
+    margin: clamp(10px, 3vh, 40px) 0 0;
+    color: var(--ivoire);
+    font-size: min(17vw, 34vh);
+    font-weight: 300;
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    transition: color 0.4s var(--ease);
+}
+
+.clock.is-paused .clock__time {
+    color: var(--taupe);
+}
+
+.clock.is-warning .clock__time {
+    color: var(--or-clair);
+}
+
+.clock__progress {
+    width: 100%;
+    margin: clamp(16px, 4vh, 48px) 0 clamp(20px, 5vh, 60px);
+}
+
+.clock__progress span {
+    transition: width 1s linear;
+}
+
+.clock__blinds {
+    display: flex;
+    justify-content: center;
+    gap: clamp(24px, 4vw, 64px);
+}
+
+.clock__ante {
+    padding-left: clamp(24px, 4vw, 64px);
+    border-left: 1px solid var(--filet-fort);
+}
+
+.clock__blinds .label {
+    margin: 0 0 12px;
+}
+
+.clock__big {
+    margin: 0;
+    color: var(--ivoire);
+    font-size: clamp(36px, 5vw, 80px);
+    line-height: 1;
+}
+
+.clock__big--soft {
+    color: var(--pierre);
+}
+
+.clock__winner {
+    margin: 28px 0 0;
+    color: var(--or);
+    font: italic 400 clamp(26px, 3vw, 44px)/1.1 var(--serif);
+}
+
+.clock__controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 22px;
+}
+
+.btn--lg.btn--rond {
+    width: 56px;
+    min-height: 56px;
+}
+
+.btn--lg.btn--pilule {
+    min-width: 220px;
+    min-height: 56px;
+    font-size: 13px;
+}
+
+.clock__toggle.is-running {
+    background: transparent;
+    border-color: var(--or);
+    color: var(--or);
+}
+
+.clock__hint {
+    margin: 18px 0 0;
+    color: var(--taupe);
+    font-size: 12px;
+    text-align: center;
+}
+
+.clock__error {
+    margin: 10px 0 0;
+    color: #e0a397;
+    font-size: 13px;
+    text-align: center;
+}
+
+.btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+@media (max-width: 900px) {
+    .clock {
+        outline: 0;
+        border: 0;
+    }
+
+    .clock__main {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .clock__center {
+        grid-column: 1 / -1;
+        order: -1;
+    }
+
+    .clock__time {
+        font-size: min(24vw, 30vh);
+    }
+
+    .clock__name {
+        display: none;
+    }
+}
+
+@media (max-width: 520px) {
+    .clock__tools .tool {
+        display: none;
+    }
+
+    .clock__stat dd {
+        font-size: 26px;
+    }
+
+    .clock__blinds {
+        gap: 20px;
+    }
+
+    .clock__ante {
+        padding-left: 20px;
+    }
+
+    .btn--lg.btn--pilule {
+        min-width: 160px;
     }
 }
 

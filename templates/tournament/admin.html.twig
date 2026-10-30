@@ -111,6 +111,20 @@
                 </div>
 
                 <aside class="admin__side">
+                    <div class="card clock-card">
+                        <div class="card__head">
+                            <h2 class="h3 card__title">Horloge</h2>
+                            {% set level = t.levelAt(t.currentLevel) %}
+                            <span class="label">{{ level.break ? 'Pause' : 'Niveau ' ~ t.levelNumber(level)|roman }} · {{ {draft: 'à venir', running: 'en cours', paused: 'en pause', finished: 'terminé'}[t.status] }}</span>
+                        </div>
+                        <a class="btn btn--or clock-card__main" href="{{ path('clock_remote', {token: t.adminToken}) }}">Ouvrir la télécommande</a>
+                        <label class="label" for="public-link">Affichage pour la télé (lecture seule)</label>
+                        <div class="secret__row">
+                            <input id="public-link" value="{{ url('clock_public', {token: t.publicToken}) }}" readonly>
+                            <button class="btn btn--ligne btn--sm" type="button" data-copy="#public-link">Copier</button>
+                        </div>
+                    </div>
+
                     <div class="card">
                         <div class="card__head">
                             <h2 class="h3 card__title">Gains</h2>

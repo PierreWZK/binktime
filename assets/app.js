@@ -1,4 +1,8 @@
 import './styles/app.css';
+import { initClock } from './clock.js';
+
+const clock = document.querySelector('[data-clock]');
+if (clock) initClock(clock);
 
 const fmt = (n) => n.toLocaleString('fr-FR').replace(/\s/g, ' ');
 const roman = (n) => ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'][n] ?? String(n);

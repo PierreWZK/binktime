@@ -332,6 +332,75 @@ class Tournament
         return $this;
     }
 
+    public function getLevelAt(int $index): ?Level
+    {
+        return $this->levels->toArray()[$index] ?? null;
+    }
+
+    /**
+     * Rattrape le temps écoulé depuis la dernière sauvegarde : les niveaux terminés s'enchaînent,
+     * si bien qu'après un rechargement l'horloge reprend au bon niveau. Renvoie vrai si l'état a changé.
+     */
+    public function syncClock(\DateTimeImmutable $now): bool
+    {
+        $changed = false;
+        while (self::RUNNING === $this->status && null !== $this->levelEndsAt && $now >= $this->levelEndsAt) {
+            $next = $this->getLevelAt($this->currentLevel + 1);
+            if (null === $next) {
+                // fin de la structure : on reste sur le dernier niveau, horloge à zéro
+                $this->status = self::PAUSED;
+                $this->remainingSeconds = 0;
+                $this->levelEndsAt = null;
+
+                return true;
+            }
+            ++$this->currentLevel;
+            $this->levelEndsAt = $this->levelEndsAt->modify(sprintf('+%d minutes', $next->getMinutes()));
+            $changed = true;
+        }
+
+        return $changed;
+    }
+
+    public function getClockRemaining(\DateTimeImmutable $now): int
+    {
+        if (self::RUNNING === $this->status && null !== $this->levelEndsAt) {
+            return max(0, $this->levelEndsAt->getTimestamp() - $now->getTimestamp());
+        }
+
+        return $this->remainingSeconds ?? ($this->getLevelAt($this->currentLevel)?->getMinutes() ?? 0) * 60;
+    }
+
+    /** Lance ou arrête l'horloge. */
+    public function toggleClock(\DateTimeImmutable $now): void
+    {
+        $this->assertNotFinished();
+        $this->syncClock($now);
+        if (self::RUNNING === $this->status) {
+            $this->remainingSeconds = $this->getClockRemaining($now);
+            $this->levelEndsAt = null;
+            $this->status = self::PAUSED;
+        } else {
+            $this->levelEndsAt = $now->modify(sprintf('+%d seconds', $this->getClockRemaining($now)));
+            $this->remainingSeconds = null;
+            $this->status = self::RUNNING;
+        }
+    }
+
+    /** Passe au niveau suivant (+1) ou revient au précédent (-1), avec la durée pleine du niveau. */
+    public function moveLevel(int $delta, \DateTimeImmutable $now): void
+    {
+        $this->assertNotFinished();
+        $this->syncClock($now);
+        $target = $this->getLevelAt($this->currentLevel + $delta) ?? throw new \DomainException($delta > 0 ? 'C\'est le dernier niveau.' : 'C\'est le premier niveau.');
+        $this->currentLevel += $delta;
+        if (self::RUNNING === $this->status) {
+            $this->levelEndsAt = $now->modify(sprintf('+%d minutes', $target->getMinutes()));
+        } else {
+            $this->remainingSeconds = null;
+        }
+    }
+
     /** Numéro affiché du niveau (I, II…), les pauses ne comptent pas. */
     public function getLevelNumber(Level $level): int
     {
