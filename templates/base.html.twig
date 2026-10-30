@@ -10,6 +10,7 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@400;500;600&display=swap">
+        <script>document.documentElement.classList.add('js')</script>
         {% block head %}{% endblock %}
         {% block javascripts %}
             {% block importmap %}{{ importmap('app') }}{% endblock %}
@@ -28,7 +29,17 @@
                     </nav>
                     <div class="header-actions">
                         <span class="badge">À venir</span>
-                        <a class="btn btn--or btn--sm" href="{{ path('home') }}">Créer un tournoi</a>
+                        <a class="btn btn--or btn--sm" href="{{ path('home') }}#installer">Créer un tournoi</a>
+                        <details class="menu">
+                            <summary aria-label="Menu"><span></span></summary>
+                            <nav aria-label="Navigation mobile">
+                                <a href="{{ path('home') }}#programme">Programme</a>
+                                <a href="{{ path('home') }}#horloge">L'horloge</a>
+                                <a href="{{ path('home') }}#saison">Saison</a>
+                                <a href="{{ path('home') }}#installer">Installer</a>
+                                <a class="menu__cta" href="{{ path('home') }}#installer">Créer un tournoi</a>
+                            </nav>
+                        </details>
                     </div>
                 </div>
             </header>

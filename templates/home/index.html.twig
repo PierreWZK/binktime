@@ -1,55 +1,197 @@
 {% extends 'base.html.twig' %}
 
-{# Étape 1 : planche de la charte, remplacée par la vraie page d'accueil à l'étape 3 #}
 {% block body %}
-    <section class="section">
-        <div class="wrap">
-            <p class="kicker label label--or">Charte graphique · V1</p>
-            <h1 class="h1">Réglés comme <span class="chute">une horloge.</span></h1>
+    {# Héros : accroche à gauche, aperçu de l'horloge qui tourne à droite #}
+    <section class="hero">
+        <div class="wrap hero__grid">
+            <div class="hero__text reveal">
+                <p class="kicker label label--or">Jour 17 · 30 jours, 30 projets</p>
+                <h1 class="h1">Vos tournois de poker, <span class="chute">réglés comme une horloge.</span></h1>
+                <p class="lead">Inscriptions, structure des blindes, horloge plein écran, éliminations, recaves et calcul des gains. BinkTime tient aussi le classement de toute la saison.</p>
+                <div class="actions">
+                    <a class="btn btn--or" href="#installer">Créer un tournoi <span aria-hidden="true">→</span></a>
+                    <a class="btn btn--ligne" href="#horloge">Voir l'horloge</a>
+                </div>
+                <hr class="rule">
+                <ul class="stack-list label">
+                    <li>Symfony</li><li>Twig</li><li>MySQL</li>
+                </ul>
+            </div>
+
+            <div class="card preview reveal" data-demo-clock aria-label="Aperçu de l'horloge">
+                <div class="preview__top">
+                    <span class="label">Aperçu · Horloge</span>
+                    <span class="badge badge--point">En cours</span>
+                </div>
+                <p class="preview__level"><span data-clock-level>Niveau VII</span></p>
+                <p class="preview__time num" data-clock-time>18:42</p>
+                <p class="label preview__caption">Temps restant</p>
+                <div class="progress"><span data-clock-progress style="width:7%"></span></div>
+                <dl class="preview__grid">
+                    <div class="data"><dt class="label">Blindes</dt><dd class="data__value num" data-clock-blinds>400 / 800</dd></div>
+                    <div class="data"><dt class="label">Prochain niveau</dt><dd class="data__value num" data-clock-next>500 / 1 000</dd></div>
+                    <div class="data"><dt class="label">Joueurs</dt><dd class="data__value num">7 / 12</dd></div>
+                    <div class="data"><dt class="label">Pause dans</dt><dd class="data__value" data-clock-break>2 niveaux</dd></div>
+                </dl>
+            </div>
         </div>
     </section>
 
-    <section class="section section--ebene">
-        <div class="wrap" style="display:grid;gap:56px">
-            <div>
-                <h2 class="h2">Chaque place <span class="chute">compte.</span></h2>
-                <p class="h3" style="margin-top:24px">Structure des blindes</p>
-                <p class="lead" style="margin-top:16px">Inscriptions, structure des blindes, horloge plein écran, éliminations, recaves et calcul des gains.</p>
-                <p class="label label--or" style="margin-top:16px">Prochain niveau</p>
-            </div>
+    {# Bandeau des étapes de la soirée #}
+    <div class="band" aria-hidden="true">
+        <div class="band__track">
+            {% for i in 1..2 %}
+                {% for step in ['Inscriptions', 'Blindes', 'Horloge', 'Recaves & add-ons', 'Gains', 'Saison'] %}
+                    <span>{{ step }}</span><i class="losange"></i>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
 
-            <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center">
-                <a class="btn btn--or" href="#">Créer un tournoi</a>
-                <a class="btn btn--ligne" href="#">Voir l'horloge</a>
-                <button class="btn btn--or btn--pilule" type="button">Pause</button>
-                <button class="btn btn--rond" type="button" aria-label="Niveau suivant">›</button>
-            </div>
-
-            <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:center">
-                <span class="badge">À venir</span>
-                <span class="badge badge--point">En cours</span>
-                <span class="badge badge--point badge--pause">En pause</span>
-                <span class="roman" style="font-size:28px">I II III</span>
-                <span class="losange"></span>
-            </div>
-
-            <div style="display:grid;gap:24px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
-                <div class="card card--double data">
-                    <span class="label">Blindes</span>
-                    <span class="data__value">400 / 800</span>
+    <section class="section" id="programme">
+        <div class="wrap">
+            <div class="split-head reveal">
+                <div>
+                    <p class="kicker label label--or">Au programme</p>
+                    <h2 class="h2">Toute la soirée, <span class="chute">du premier jeton au dernier tapis.</span></h2>
                 </div>
-                <div class="card" style="padding:0">
+                <p class="split-head__aside">Vous jouez. BinkTime s'occupe du reste : chronomètre, comptes et palmarès.</p>
+            </div>
+
+            <ol class="program reveal">
+                {% for step in [
+                    {title: 'Créer le tournoi', text: 'Buy-in, tapis de départ et structure des blindes, avec des modèles fournis.'},
+                    {title: 'Inscrire les joueurs', text: 'Les arrivées, les recaves et les add-ons, suivis sans calepin.'},
+                    {title: 'L\'horloge', text: 'Plein écran : niveau, blindes, temps restant, prochain niveau et pause.'},
+                    {title: 'Éliminations & gains', text: 'Les sorties dans l\'ordre, les places payées et les gains calculés pour vous.'},
+                    {title: 'La saison', text: 'Un classement qui se construit soir après soir, en points par place.'},
+                ] %}
+                    <li class="program__item">
+                        <span class="roman program__num">{{ loop.index|roman }}</span>
+                        <h3 class="program__title">{{ step.title }}</h3>
+                        <p>{{ step.text }}</p>
+                    </li>
+                {% endfor %}
+            </ol>
+        </div>
+    </section>
+
+    <section class="section section--ebene" id="horloge">
+        <div class="wrap two-col">
+            <div class="reveal">
+                <p class="kicker label label--or">L'horloge</p>
+                <h2 class="h2">Le temps, <span class="chute">tenu avec élégance.</span></h2>
+                <p class="lead two-col__lead">Projetée sur la télévision du salon, l'horloge annonce chaque montée de blindes. Personne ne surveille sa montre, tout le monde voit la même chose.</p>
+                <ul class="feature-list">
+                    <li><span>Niveau en cours</span><em>en grand</em></li>
+                    <li><span>Blindes &amp; ante</span><em>lisibles de loin</em></li>
+                    <li><span>Prochain niveau</span><em>annoncé</em></li>
+                    <li><span>Pause</span><em>d'un geste</em></li>
+                </ul>
+            </div>
+
+            <div class="card structure reveal">
+                <div class="card__head">
+                    <h3 class="h3 card__title">Structure des blindes</h3>
+                    <span class="label">Modèle · exemple</span>
+                </div>
+                <div class="table-scroll">
                     <table class="table">
-                        <thead><tr><th>Niveau</th><th>Petite</th><th>Grosse</th><th>Ante</th></tr></thead>
+                        <thead><tr><th>Niveau</th><th>Petite</th><th>Grosse</th><th>Ante</th><th>Durée</th></tr></thead>
                         <tbody>
-                            <tr><td>VI</td><td>300</td><td>600</td><td>75</td></tr>
-                            <tr class="is-active"><td>VII · en cours</td><td>400</td><td>800</td><td>100</td></tr>
-                            <tr><td>VIII</td><td>500</td><td>1 000</td><td>100</td></tr>
+                            {% for level in levels %}
+                                {% if level.break %}
+                                    <tr class="is-break"><td colspan="5">Pause · {{ level.minutes }} min</td></tr>
+                                {% else %}
+                                    {% set n = level.tournament.levelNumber(level) %}
+                                    <tr{% if n == 7 %} class="is-active"{% endif %}>
+                                        <td>{{ n|roman }}{% if n == 7 %} · en cours{% endif %}</td>
+                                        <td>{{ level.smallBlind|chips }}</td>
+                                        <td>{{ level.bigBlind|chips }}</td>
+                                        <td>{{ level.ante|chips }}</td>
+                                        <td>{{ level.minutes }} min</td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
                         </tbody>
                     </table>
-                    <div class="progress"><span style="width:38%"></span></div>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <section class="section" id="saison">
+        <div class="wrap">
+            <div class="reveal">
+                <p class="kicker label label--or">Gains &amp; saison</p>
+                <h2 class="h2">Chaque élimination compte. <span class="chute">Chaque place aussi.</span></h2>
+            </div>
+
+            <div class="duo">
+                <div class="card reveal">
+                    <div class="card__head">
+                        <h3 class="h3 card__title">Places payées</h3>
+                        <span class="label">Exemple · 12 joueurs × 20 €</span>
+                    </div>
+                    <ol class="podium">
+                        {% for prize in prizes %}
+                            <li>
+                                <span class="podium__place">{{ loop.index }}<sup>{{ loop.first ? 'er' : 'e' }}</sup></span>
+                                <span class="label">{{ [50, 30, 20][loop.index0] }} %</span>
+                                <span class="podium__prize num">{{ prize }} €</span>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                    <p class="note">Recaves et add-ons intégrés au prize pool, sans calcul de tête en fin de soirée.</p>
+                </div>
+
+                <div class="card reveal">
+                    <div class="card__head">
+                        <h3 class="h3 card__title">Classement de la saison</h3>
+                        <span class="label">{{ season ? season.organizer.name : 'Points par place' }}</span>
+                    </div>
+                    <ol class="ranking">
+                        {% for row in standings %}
+                            <li>
+                                <span class="roman ranking__rank">{{ '%02d'|format(loop.index) }}</span>
+                                <span class="ranking__name">{{ row.name }}</span>
+                                <span class="ranking__meta">{{ row.tournaments }} tournoi{{ row.tournaments > 1 ? 's' }}</span>
+                                <span class="ranking__pts num">{{ row.points }} <small>pts</small></span>
+                            </li>
+                        {% else %}
+                            <li class="ranking__empty">Le classement s'écrit au premier tournoi terminé.</li>
+                        {% endfor %}
+                    </ol>
+                    {% if season %}<p class="note">{{ season.name }} · joueurs − place + 1, doublés dans l'argent.</p>{% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section section--ebene" id="installer">
+        <div class="wrap two-col two-col--center">
+            <div class="reveal">
+                <p class="kicker label label--or">Lancer en local</p>
+                <h2 class="h2">Cinq commandes, <span class="chute">et la table est mise.</span></h2>
+                <p class="two-col__lead">SQLite en local, aucune base à installer. En production, identifiants MySQL dans <code>.env.local</code>, jamais versionné.</p>
+            </div>
+            <div class="terminal reveal">
+                <div class="terminal__bar"><i></i><i></i><i></i><span class="label">Terminal</span></div>
+                <pre><code><span>$</span> git clone https://github.com/PierreWZK/binktime.git
+<span>$</span> composer install
+<span>$</span> php bin/console doctrine:migrations:migrate
+<span>$</span> php bin/console doctrine:fixtures:load
+<span>$</span> symfony serve -d   <em># http://127.0.0.1:8000</em></code></pre>
+            </div>
+        </div>
+    </section>
+
+    <section class="section finale">
+        <div class="wrap reveal">
+            <span class="finale__mark">{% include '_logo.html.twig' %}</span>
+            <h2 class="h2">Shuffle up <span class="chute">and deal.</span></h2>
+            <p>Mise en ligne prévue sur <a class="link" href="https://binktime.projectp.fr">binktime.projectp.fr</a>.</p>
+            <a class="btn btn--or" href="#installer">Créer un tournoi</a>
         </div>
     </section>
 {% endblock %}

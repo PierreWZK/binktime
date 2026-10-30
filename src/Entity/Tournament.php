@@ -332,6 +332,12 @@ class Tournament
         return $this;
     }
 
+    /** Numéro affiché du niveau (I, II…), les pauses ne comptent pas. */
+    public function getLevelNumber(Level $level): int
+    {
+        return $this->levels->filter(fn (Level $l) => !$l->isBreak() && $l->getPosition() <= $level->getPosition())->count();
+    }
+
     /** @return Collection<int, Entry> */
     public function getEntries(): Collection
     {
