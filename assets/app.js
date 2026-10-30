@@ -11,8 +11,13 @@ if (game) initGame(game);
 const fmt = (n) => n.toLocaleString('fr-FR').replace(/\s/g, ' ');
 const roman = (n) => ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'][n] ?? String(n);
 
-// Apparition douce des blocs au défilement
+// Apparition douce des blocs au défilement. La classe « js » n'est posée qu'ici : si ce script
+// ne se charge pas, rien n'est masqué. Ce qui est déjà à l'écran s'affiche sans attendre.
 const reveals = document.querySelectorAll('.reveal');
+reveals.forEach((el) => {
+    if (el.getBoundingClientRect().top < innerHeight) el.classList.add('is-in');
+});
+document.documentElement.classList.add('js');
 if ('IntersectionObserver' in window) {
     const io = new IntersectionObserver((entries) => {
         for (const entry of entries) {

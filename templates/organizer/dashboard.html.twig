@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Mon espace · {{ o.name }} · BinkTime{% endblock %}
+{% block canonical %}{% endblock %}
 {% block head %}<meta name="robots" content="noindex">{% endblock %}
 
 {% set statusLabel = {draft: 'À venir', running: 'En cours', paused: 'En pause', finished: 'Terminé'} %}

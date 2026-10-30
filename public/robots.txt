@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /pilotage/
+Disallow: /horloge/
+Disallow: /espace
+Disallow: /connexion
+Disallow: /deconnexion
+
+Sitemap: https://binktime.projectp.fr/sitemap.xml

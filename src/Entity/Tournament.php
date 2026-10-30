@@ -123,6 +123,7 @@ class Tournament
     public function setOrganizer(?Organizer $organizer): static
     {
         $this->organizer = $organizer;
+        $organizer?->getTournaments()->add($this);
 
         return $this;
     }
