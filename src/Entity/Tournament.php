@@ -344,6 +344,137 @@ class Tournament
         return $this->entries;
     }
 
+    /** Inscription, y compris tardive ; un même nom ne peut pas s'inscrire deux fois. */
+    public function addPlayer(string $name): Entry
+    {
+        $this->assertNotFinished();
+        $name = trim(preg_replace('/\s+/', ' ', $name));
+        if ('' === $name || mb_strlen($name) > 40) {
+            throw new \DomainException('Le nom du joueur doit faire entre 1 et 40 caractères.');
+        }
+        $entry = new Entry($this, $name);
+        foreach ($this->entries as $other) {
+            if ($other !== $entry && $other->getPlayerKey() === $entry->getPlayerKey()) {
+                $this->entries->removeElement($entry);
+                throw new \DomainException(sprintf('%s est déjà inscrit.', $name));
+            }
+        }
+        $this->renumber();
+
+        return $entry;
+    }
+
+    /** Retire un joueur encore en jeu (inscrit par erreur). */
+    public function removePlayer(Entry $entry): void
+    {
+        $this->assertNotFinished();
+        if (!$entry->isAlive()) {
+            throw new \DomainException('On ne retire pas un joueur déjà éliminé : annulez d\'abord son élimination.');
+        }
+        $this->entries->removeElement($entry);
+        $this->renumber();
+    }
+
+    /** Le joueur sort à la dernière place encore occupée ; quand il n'en reste qu'un, il gagne et le tournoi se termine. */
+    public function eliminate(Entry $entry): void
+    {
+        $this->assertNotFinished();
+        if (!$entry->isAlive()) {
+            throw new \DomainException(sprintf('%s est déjà éliminé.', $entry->getPlayerName()));
+        }
+        if ($this->getPlayersLeft() < 2) {
+            throw new \DomainException('Il faut au moins deux joueurs en jeu pour éliminer quelqu\'un.');
+        }
+        $entry->eliminate($this->getPlayersLeft());
+
+        if (1 === $this->getPlayersLeft()) {
+            $this->entries->filter(fn (Entry $e) => $e->isAlive())->first()->declareWinner();
+            $this->status = self::FINISHED;
+            $this->finishedAt = new \DateTimeImmutable();
+            $this->levelEndsAt = null;
+        }
+    }
+
+    /** Annule la dernière élimination (et la fin du tournoi si elle l'avait déclenchée). */
+    public function undoLastElimination(): ?Entry
+    {
+        $last = $this->getEliminated()[0] ?? null;
+        if (null === $last) {
+            return null;
+        }
+        if ($this->isFinished()) {
+            foreach ($this->entries as $entry) {
+                if (1 === $entry->getFinishPosition()) {
+                    $entry->revive();
+                }
+            }
+            // l'horloge reprend arrêtée, ou reste « à venir » si elle n'avait jamais tourné
+            $this->status = 0 === $this->currentLevel && null === $this->remainingSeconds ? self::DRAFT : self::PAUSED;
+            $this->finishedAt = null;
+        }
+        $last->revive();
+
+        return $last;
+    }
+
+    /** @return list<Entry> Éliminés, du dernier sorti au premier. */
+    public function getEliminated(): array
+    {
+        $out = $this->entries->filter(fn (Entry $e) => null !== $e->getEliminatedAt())->toArray();
+        usort($out, fn (Entry $a, Entry $b) => $a->getFinishPosition() <=> $b->getFinishPosition());
+
+        return $out;
+    }
+
+    /** @return list<Entry> Le classement : en jeu d'abord, puis vainqueur et éliminés par place. */
+    public function getStandings(): array
+    {
+        $out = $this->entries->toArray();
+        usort($out, fn (Entry $a, Entry $b) => [$a->getFinishPosition() ?? 0, $a->getId()] <=> [$b->getFinishPosition() ?? 0, $b->getId()]);
+
+        return $out;
+    }
+
+    /** Recale les places des éliminés après une inscription tardive ou un retrait, en gardant leur ordre de sortie. */
+    private function renumber(): void
+    {
+        $position = $this->entries->count();
+        $eliminated = $this->getEliminated();
+        foreach (array_reverse($eliminated) as $entry) {
+            $entry->moveTo($position--);
+        }
+    }
+
+    public function rebuy(Entry $entry): void
+    {
+        $this->assertCanBuy($entry, $this->rebuyPrice, 'Pas de recave dans ce tournoi.');
+        $entry->addRebuy();
+    }
+
+    public function addon(Entry $entry): void
+    {
+        $this->assertCanBuy($entry, $this->addonPrice, 'Pas d\'add-on dans ce tournoi.');
+        $entry->addAddon();
+    }
+
+    private function assertCanBuy(Entry $entry, int $price, string $disabled): void
+    {
+        $this->assertNotFinished();
+        if ($price <= 0) {
+            throw new \DomainException($disabled);
+        }
+        if (!$entry->isAlive()) {
+            throw new \DomainException(sprintf('%s est éliminé : annulez d\'abord son élimination.', $entry->getPlayerName()));
+        }
+    }
+
+    private function assertNotFinished(): void
+    {
+        if ($this->isFinished()) {
+            throw new \DomainException('Le tournoi est terminé.');
+        }
+    }
+
     public function getRebuyCount(): int
     {
         return array_sum($this->entries->map(fn (Entry $e) => $e->getRebuys())->toArray());

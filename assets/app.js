@@ -19,6 +19,19 @@ if ('IntersectionObserver' in window) {
     reveals.forEach((el) => el.classList.add('is-in'));
 }
 
+// Boutons « Copier » (lien secret)
+document.querySelectorAll('[data-copy]').forEach((button) => button.addEventListener('click', async () => {
+    const input = document.querySelector(button.dataset.copy);
+    input.select();
+    try {
+        await navigator.clipboard.writeText(input.value);
+    } catch {
+        document.execCommand('copy');
+    }
+    button.textContent = 'Copié';
+    setTimeout(() => { button.textContent = 'Copier'; }, 1800);
+}));
+
 // Le menu mobile se referme après un choix
 document.querySelectorAll('.menu a').forEach((a) => a.addEventListener('click', () => a.closest('details').removeAttribute('open')));
 

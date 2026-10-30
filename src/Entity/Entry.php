@@ -92,7 +92,7 @@ class Entry
 
     public function isAlive(): bool
     {
-        return null === $this->eliminatedAt && 1 !== $this->finishPosition;
+        return null === $this->eliminatedAt;
     }
 
     public function getEliminatedAt(): ?\DateTimeImmutable
@@ -104,6 +104,14 @@ class Entry
     {
         $this->finishPosition = $position;
         $this->eliminatedAt = new \DateTimeImmutable();
+
+        return $this;
+    }
+
+    /** Change la place d'un éliminé sans toucher à son heure de sortie. */
+    public function moveTo(int $position): static
+    {
+        $this->finishPosition = $position;
 
         return $this;
     }

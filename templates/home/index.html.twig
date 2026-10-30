@@ -9,7 +9,7 @@
                 <h1 class="h1">Vos tournois de poker, <span class="chute">réglés comme une horloge.</span></h1>
                 <p class="lead">Inscriptions, structure des blindes, horloge plein écran, éliminations, recaves et calcul des gains. BinkTime tient aussi le classement de toute la saison.</p>
                 <div class="actions">
-                    <a class="btn btn--or" href="#installer">Créer un tournoi <span aria-hidden="true">→</span></a>
+                    <a class="btn btn--or" href="{{ path('tournament_new') }}">Créer un tournoi <span aria-hidden="true">→</span></a>
                     <a class="btn btn--ligne" href="#horloge">Voir l'horloge</a>
                 </div>
                 <hr class="rule">
@@ -191,7 +191,7 @@
             <span class="finale__mark">{% include '_logo.html.twig' %}</span>
             <h2 class="h2">Shuffle up <span class="chute">and deal.</span></h2>
             <p>Mise en ligne prévue sur <a class="link" href="https://binktime.projectp.fr">binktime.projectp.fr</a>.</p>
-            <a class="btn btn--or" href="#installer">Créer un tournoi</a>
+            <a class="btn btn--or" href="{{ path('tournament_new') }}">Créer un tournoi</a>
         </div>
     </section>
 {% endblock %}

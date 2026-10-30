@@ -1,0 +1,168 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ t.name }} · Pilotage · BinkTime{% endblock %}
+
+{% block head %}
+    <meta name="robots" content="noindex, nofollow">
+    {# le lien secret ne doit pas fuiter vers d'autres sites #}
+    <meta name="referrer" content="no-referrer">
+{% endblock %}
+
+{% block body %}
+    {% set prizes = t.prizes %}
+    {% set statusLabel = {draft: 'À venir', running: 'En cours', paused: 'En pause', finished: 'Terminé'}[t.status] %}
+    <section class="section section--tight">
+        <div class="wrap admin">
+            <header class="admin__head">
+                <div>
+                    <p class="kicker label label--or">Pilotage · lien secret</p>
+                    <h1 class="h2">{{ t.name }}</h1>
+                    <p class="admin__meta">
+                        <span class="badge {{ t.status == 'draft' ? '' : 'badge--point' }} {{ t.status in ['paused', 'finished'] ? 'badge--pause' }}">{{ statusLabel }}</span>
+                        <span>{{ t.startsAt|date('d/m/Y · H\\hi') }}</span>
+                        <span>Buy-in {{ t.buyIn }} €{% if t.rebuyPrice %} · recave {{ t.rebuyPrice }} €{% endif %}{% if t.addonPrice %} · add-on {{ t.addonPrice }} €{% endif %}</span>
+                    </p>
+                </div>
+                <div class="secret">
+                    <label class="label" for="secret-link">Lien de pilotage, à garder pour vous</label>
+                    <div class="secret__row">
+                        <input id="secret-link" value="{{ url('tournament_admin', {token: t.adminToken}) }}" readonly>
+                        <button class="btn btn--ligne btn--sm" type="button" data-copy="#secret-link">Copier</button>
+                    </div>
+                </div>
+            </header>
+
+            {% for type, messages in app.flashes %}
+                {% for message in messages %}<p class="flash flash--{{ type }}" role="status">{{ message }}</p>{% endfor %}
+            {% endfor %}
+
+            {% if t.finished %}
+                {% set winner = t.standings|filter(e => e.finishPosition == 1)|first %}
+                <div class="winner card card--double">
+                    <span class="roman">I</span>
+                    <p><span class="label label--or">Vainqueur</span><strong>{{ winner.playerName }}</strong></p>
+                    <span class="num winner__prize">{{ t.prizeFor(winner) }} €</span>
+                </div>
+            {% endif %}
+
+            <dl class="stats">
+                <div class="data"><dt class="label">En jeu</dt><dd class="data__value num">{{ t.playersLeft }} <small>/ {{ t.entries|length }}</small></dd></div>
+                <div class="data"><dt class="label">Cagnotte</dt><dd class="data__value num">{{ t.prizePool }} €</dd></div>
+                <div class="data"><dt class="label">Tapis moyen</dt><dd class="data__value num">{{ t.averageStack|chips }}</dd></div>
+                <div class="data"><dt class="label">Recaves · add-ons</dt><dd class="data__value num">{{ t.rebuyCount }} · {{ t.addonCount }}</dd></div>
+                <div class="data"><dt class="label">Places payées</dt><dd class="data__value num">{{ t.paidPlaces }}</dd></div>
+            </dl>
+
+            <div class="admin__grid">
+                <div class="card players">
+                    <div class="card__head">
+                        <h2 class="h3 card__title">Joueurs</h2>
+                        {% if t.eliminated %}
+                            <form method="post" action="{{ path('tournament_undo', {token: t.adminToken}) }}">
+                                <button class="btn-text" type="submit">↶ Annuler la dernière élimination</button>
+                            </form>
+                        {% endif %}
+                    </div>
+
+                    {% if not t.finished %}
+                        <form class="add-player" method="post" action="{{ path('tournament_add_player', {token: t.adminToken}) }}">
+                            <label class="sr-only" for="names">Nom du joueur</label>
+                            <input id="names" name="names" placeholder="Nom du joueur (ou plusieurs, séparés par des virgules)" maxlength="400" autocomplete="off" {{ t.entries is empty ? 'autofocus' }}>
+                            <button class="btn btn--or btn--sm" type="submit">Inscrire</button>
+                        </form>
+                    {% endif %}
+
+                    {% if t.entries is empty %}
+                        <p class="empty">Personne n'est encore inscrit. Ajoutez les joueurs au fil des arrivées.</p>
+                    {% else %}
+                        <ol class="player-list">
+                            {% for e in t.standings %}
+                                {% set place = e.finishPosition %}
+                                <li class="player {{ place == 1 ? 'is-winner' : (e.alive ? 'is-alive' : 'is-out') }}">
+                                    <span class="player__place">
+                                        {% if place %}{{ place }}<sup>{{ place == 1 ? 'er' : 'e' }}</sup>{% else %}<i class="losange" title="En jeu"></i>{% endif %}
+                                    </span>
+                                    <span class="player__name">
+                                        {{ e.playerName }}
+                                        {% if e.rebuys or e.addons %}
+                                            <small>{% if e.rebuys %}{{ e.rebuys }} recave{{ e.rebuys > 1 ? 's' }}{% endif %}{% if e.rebuys and e.addons %} · {% endif %}{% if e.addons %}{{ e.addons }} add-on{{ e.addons > 1 ? 's' }}{% endif %}</small>
+                                        {% endif %}
+                                    </span>
+                                    {% if e.alive and not t.finished %}
+                                        <span class="player__actions">
+                                            {% if t.rebuyPrice %}
+                                                <form method="post" action="{{ path('tournament_player', {token: t.adminToken, id: e.id, action: 'rebuy'}) }}"><button class="chip" type="submit">+ Recave</button></form>
+                                            {% endif %}
+                                            {% if t.addonPrice %}
+                                                <form method="post" action="{{ path('tournament_player', {token: t.adminToken, id: e.id, action: 'addon'}) }}"><button class="chip" type="submit">+ Add-on</button></form>
+                                            {% endif %}
+                                            {% if t.playersLeft > 1 %}
+                                                <form method="post" action="{{ path('tournament_player', {token: t.adminToken, id: e.id, action: 'eliminate'}) }}"><button class="chip chip--or" type="submit">Éliminer</button></form>
+                                            {% endif %}
+                                            <form method="post" action="{{ path('tournament_player', {token: t.adminToken, id: e.id, action: 'remove'}) }}"><button class="chip chip--ghost" type="submit" aria-label="Retirer {{ e.playerName }}" title="Retirer (inscrit par erreur)">×</button></form>
+                                        </span>
+                                    {% else %}
+                                        <span class="player__prize num">{% set prize = t.prizeFor(e) %}{{ prize ? prize ~ ' €' : '—' }}</span>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ol>
+                    {% endif %}
+                </div>
+
+                <aside class="admin__side">
+                    <div class="card">
+                        <div class="card__head">
+                            <h2 class="h3 card__title">Gains</h2>
+                            <span class="label">{{ t.prizePool }} € à partager</span>
+                        </div>
+                        <ol class="podium podium--compact">
+                            {% for prize in prizes %}
+                                <li>
+                                    <span class="podium__place">{{ loop.index }}<sup>{{ loop.first ? 'er' : 'e' }}</sup></span>
+                                    <span class="label">{{ t.payouts[loop.index0] }} %</span>
+                                    <span class="podium__prize num">{{ prize }} €</span>
+                                </li>
+                            {% else %}
+                                <li class="empty">Les gains s'affichent dès le premier inscrit.</li>
+                            {% endfor %}
+                        </ol>
+                        {% if not t.finished %}
+                            <form class="payouts-form" method="post" action="{{ path('tournament_payouts', {token: t.adminToken}) }}">
+                                <label class="label" for="payouts">Répartition (%)</label>
+                                <div class="secret__row">
+                                    <input id="payouts" name="payouts" value="{{ t.payouts|join(' / ') }}">
+                                    <button class="btn btn--ligne btn--sm" type="submit">Modifier</button>
+                                </div>
+                            </form>
+                        {% endif %}
+                    </div>
+
+                    <details class="card structure-mini">
+                        <summary class="card__head">
+                            <h2 class="h3 card__title">Structure</h2>
+                            <span class="label">{{ t.levels|filter(l => not l.break)|length }} niveaux · tapis {{ t.startingStack|chips }}</span>
+                        </summary>
+                        <table class="table">
+                            <thead><tr><th>Niveau</th><th>Blindes</th><th>Ante</th><th>Durée</th></tr></thead>
+                            <tbody>
+                                {% for level in t.levels %}
+                                    {% if level.break %}
+                                        <tr class="is-break"><td colspan="4">Pause · {{ level.minutes }} min</td></tr>
+                                    {% else %}
+                                        <tr{% if level.position == t.currentLevel %} class="is-active"{% endif %}>
+                                            <td>{{ t.levelNumber(level)|roman }}</td>
+                                            <td>{{ level.smallBlind|chips }} / {{ level.bigBlind|chips }}</td>
+                                            <td>{{ level.ante|chips }}</td>
+                                            <td>{{ level.minutes }} min</td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </details>
+                </aside>
+            </div>
+        </div>
+    </section>
+{% endblock %}

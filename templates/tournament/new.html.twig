@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer un tournoi · BinkTime{% endblock %}
+
+{% macro error(errors, field) %}
+    {% if errors[field] is defined %}<p class="field__error" id="{{ field }}-error">{{ errors[field] }}</p>{% endif %}
+{% endmacro %}
+
+{% block body %}
+    {% import _self as f %}
+    <section class="section section--tight">
+        <div class="wrap form-layout">
+            <div class="form-intro">
+                <p class="kicker label label--or">Tournoi à la maison · sans compte</p>
+                <h1 class="h2">Créer <span class="chute">le tournoi.</span></h1>
+                <p class="lead">Pas d'inscription : vous recevez un lien secret pour piloter la soirée depuis n'importe quel téléphone. Gardez-le, il remplace un mot de passe.</p>
+                <p class="note">Vous organisez des tournois réguliers dans un établissement ? Les comptes organisateurs, avec classement de saison public, arrivent bientôt.</p>
+            </div>
+
+            <form class="card card--double form" method="post" novalidate>
+                {% if errors %}<p class="flash flash--error" role="alert">Quelques champs sont à revoir.</p>{% endif %}
+
+                <div class="field">
+                    <label class="label" for="name">Nom du tournoi</label>
+                    <input id="name" name="name" value="{{ values.name }}" maxlength="80" placeholder="Soirée chez Max" required autofocus {% if errors.name is defined %}aria-invalid="true" aria-describedby="name-error"{% endif %}>
+                    {{ f.error(errors, 'name') }}
+                </div>
+
+                <div class="field">
+                    <label class="label" for="startsAt">Date et heure</label>
+                    <input id="startsAt" name="startsAt" type="datetime-local" value="{{ values.startsAt }}" required {% if errors.startsAt is defined %}aria-invalid="true"{% endif %}>
+                    {{ f.error(errors, 'startsAt') }}
+                </div>
+
+                <fieldset class="field">
+                    <legend class="label">Structure des blindes</legend>
+                    <div class="choices">
+                        {% for key, tpl in templates %}
+                            <label class="choice">
+                                <input type="radio" name="template" value="{{ key }}" {{ values.template == key ? 'checked' }}>
+                                <span class="choice__body">
+                                    <span class="choice__title">{{ tpl.label }}</span>
+                                    <span class="choice__meta">{{ tpl.minutes }} min · {{ tpl.stack|chips }} jetons</span>
+                                    <span class="choice__pitch">{{ tpl.pitch }}</span>
+                                </span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                    {{ f.error(errors, 'template') }}
+                </fieldset>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label class="label" for="buyIn">Buy-in (€)</label>
+                        <input id="buyIn" name="buyIn" inputmode="numeric" value="{{ values.buyIn }}" {% if errors.buyIn is defined %}aria-invalid="true"{% endif %}>
+                        {{ f.error(errors, 'buyIn') }}
+                    </div>
+                    <div class="field">
+                        <label class="label" for="rebuyPrice">Recave (€)</label>
+                        <input id="rebuyPrice" name="rebuyPrice" inputmode="numeric" value="{{ values.rebuyPrice }}" aria-describedby="rebuy-hint" {% if errors.rebuyPrice is defined %}aria-invalid="true"{% endif %}>
+                        {{ f.error(errors, 'rebuyPrice') }}
+                    </div>
+                    <div class="field">
+                        <label class="label" for="addonPrice">Add-on (€)</label>
+                        <input id="addonPrice" name="addonPrice" inputmode="numeric" value="{{ values.addonPrice }}" aria-describedby="rebuy-hint" {% if errors.addonPrice is defined %}aria-invalid="true"{% endif %}>
+                        {{ f.error(errors, 'addonPrice') }}
+                    </div>
+                </div>
+                <p class="field__hint" id="rebuy-hint">0 € = pas de recave ou d'add-on. Une recave rend un tapis de départ, un add-on un tapis et demi.</p>
+
+                <div class="field">
+                    <label class="label" for="payouts">Répartition des gains (%)</label>
+                    <input id="payouts" name="payouts" value="{{ values.payouts }}" aria-describedby="payouts-hint" {% if errors.payouts is defined %}aria-invalid="true"{% endif %}>
+                    <p class="field__hint" id="payouts-hint">Une valeur par place payée, du 1er au dernier. Total 100.</p>
+                    {{ f.error(errors, 'payouts') }}
+                </div>
+
+                <button class="btn btn--or form__submit" type="submit">Créer le tournoi <span aria-hidden="true">→</span></button>
+            </form>
+        </div>
+    </section>
+{% endblock %}
