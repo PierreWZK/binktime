@@ -6,10 +6,12 @@ use App\Repository\OrganizerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /** Un établissement qui organise des tournois réguliers ; sa page et son classement sont publics. */
 #[ORM\Entity(repositoryClass: OrganizerRepository::class)]
-class Organizer
+class Organizer implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -24,6 +26,13 @@ class Organizer
 
     #[ORM\Column(length: 80, nullable: true)]
     private ?string $city = null;
+
+    #[ORM\Column(length: 180, unique: true)]
+    private string $email = '';
+
+    /** Mot de passe haché (jamais en clair). */
+    #[ORM\Column]
+    private string $password = '';
 
     #[ORM\Column]
     private \DateTimeImmutable $createdAt;
@@ -79,6 +88,51 @@ class Organizer
         $this->city = $city;
 
         return $this;
+    }
+
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): static
+    {
+        $this->email = mb_strtolower(trim($email));
+
+        return $this;
+    }
+
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $hashedPassword): static
+    {
+        $this->password = $hashedPassword;
+
+        return $this;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->email;
+    }
+
+    public function getRoles(): array
+    {
+        return ['ROLE_ORGANIZER'];
+    }
+
+    #[\Deprecated]
+    public function eraseCredentials(): void
+    {
+    }
+
+    /** Saison la plus récente, celle que la page publique affiche par défaut. */
+    public function getCurrentSeason(): ?Season
+    {
+        return $this->seasons->first() ?: null;
     }
 
     public function getCreatedAt(): \DateTimeImmutable

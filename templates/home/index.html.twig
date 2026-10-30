@@ -10,7 +10,7 @@
                 <p class="lead">Inscriptions, structure des blindes, horloge plein écran, éliminations, recaves et calcul des gains. BinkTime tient aussi le classement de toute la saison.</p>
                 <div class="actions">
                     <a class="btn btn--or" href="{{ path('tournament_new') }}">Créer un tournoi <span aria-hidden="true">→</span></a>
-                    <a class="btn btn--ligne" href="#horloge">Voir l'horloge</a>
+                    <a class="btn btn--ligne" href="{{ live ? path('clock_public', {token: live.publicToken}) : '#horloge' }}">Voir l'horloge</a>
                 </div>
                 <hr class="rule">
                 <ul class="stack-list label">
@@ -148,7 +148,11 @@
                 <div class="card reveal">
                     <div class="card__head">
                         <h3 class="h3 card__title">Classement de la saison</h3>
-                        <span class="label">{{ season ? season.organizer.name : 'Points par place' }}</span>
+                        {% if season %}
+                            <a class="label label--or" href="{{ path('organizer_show', {slug: season.organizer.slug}) }}">{{ season.organizer.name }} →</a>
+                        {% else %}
+                            <span class="label">Points par place</span>
+                        {% endif %}
                     </div>
                     <ol class="ranking">
                         {% for row in standings %}

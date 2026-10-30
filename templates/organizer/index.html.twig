@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Établissements · BinkTime{% endblock %}
+{% block description %}Les bars, clubs et cercles qui organisent leurs tournois de poker avec BinkTime : dates, horloge en direct et classements de saison.{% endblock %}
+
+{% block body %}
+    <section class="section section--tight">
+        <div class="wrap">
+            <div class="split-head">
+                <div>
+                    <p class="kicker label label--or">Établissements</p>
+                    <h1 class="h2">Où jouer <span class="chute">ce soir.</span></h1>
+                </div>
+                <p class="split-head__aside">Chaque établissement a sa page : ses prochains tournois, l'horloge en direct et le classement de la saison. <a class="link" href="{{ path('app_register') }}">Inscrire le vôtre</a></p>
+            </div>
+
+            {% if organizers is empty %}
+                <p class="empty">Aucun établissement pour l'instant.</p>
+            {% else %}
+                <ul class="venue-grid">
+                    {% for o in organizers %}
+                        {% set live = o.tournaments|filter(t => t.status in ['running', 'paused'])|length %}
+                        <li>
+                            <a class="card venue-card" href="{{ path('organizer_show', {slug: o.slug}) }}">
+                                <span class="roman">{{ loop.index|roman }}</span>
+                                <span class="venue-card__name">{{ o.name }}</span>
+                                <span class="venue-card__meta">{{ o.city ?: 'Ville non précisée' }} · {{ o.tournaments|filter(t => t.finished)|length }} tournois joués</span>
+                                {% if live %}<span class="badge badge--point">Tournoi en cours</span>{% endif %}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}

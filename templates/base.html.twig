@@ -25,10 +25,14 @@
                         <a href="{{ path('home') }}#programme">Programme</a>
                         <a href="{{ path('home') }}#horloge">L'horloge</a>
                         <a href="{{ path('home') }}#saison">Saison</a>
-                        <a href="{{ path('home') }}#installer">Installer</a>
+                        <a href="{{ path('organizer_index') }}">Établissements</a>
                     </nav>
                     <div class="header-actions">
-                        <span class="badge">À venir</span>
+                        {% if app.user %}
+                            <a class="badge badge--link" href="{{ path('organizer_dashboard') }}">Mon espace</a>
+                        {% else %}
+                            <a class="badge badge--link" href="{{ path('app_login') }}">Connexion</a>
+                        {% endif %}
                         <a class="btn btn--or btn--sm" href="{{ path('tournament_new') }}">Créer un tournoi</a>
                         <details class="menu">
                             <summary aria-label="Menu"><span></span></summary>
@@ -36,7 +40,8 @@
                                 <a href="{{ path('home') }}#programme">Programme</a>
                                 <a href="{{ path('home') }}#horloge">L'horloge</a>
                                 <a href="{{ path('home') }}#saison">Saison</a>
-                                <a href="{{ path('home') }}#installer">Installer</a>
+                                <a href="{{ path('organizer_index') }}">Établissements</a>
+                                <a href="{{ app.user ? path('organizer_dashboard') : path('app_login') }}">{{ app.user ? 'Mon espace' : 'Connexion' }}</a>
                                 <a class="menu__cta" href="{{ path('tournament_new') }}">Créer un tournoi</a>
                             </nav>
                         </details>

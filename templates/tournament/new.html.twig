@@ -11,14 +11,34 @@
     <section class="section section--tight">
         <div class="wrap form-layout">
             <div class="form-intro">
-                <p class="kicker label label--or">Tournoi à la maison · sans compte</p>
-                <h1 class="h2">Créer <span class="chute">le tournoi.</span></h1>
-                <p class="lead">Pas d'inscription : vous recevez un lien secret pour piloter la soirée depuis n'importe quel téléphone. Gardez-le, il remplace un mot de passe.</p>
-                <p class="note">Vous organisez des tournois réguliers dans un établissement ? Les comptes organisateurs, avec classement de saison public, arrivent bientôt.</p>
+                {% if organizer %}
+                    <p class="kicker label label--or">{{ organizer.name }}</p>
+                    <h1 class="h2">Nouveau <span class="chute">tournoi.</span></h1>
+                    <p class="lead">Rattaché à une saison, il compte pour le classement public de votre établissement dès qu'il est terminé.</p>
+                {% else %}
+                    <p class="kicker label label--or">Tournoi à la maison · sans compte</p>
+                    <h1 class="h2">Créer <span class="chute">le tournoi.</span></h1>
+                    <p class="lead">Pas d'inscription : vous recevez un lien secret pour piloter la soirée depuis n'importe quel téléphone. Gardez-le, il remplace un mot de passe.</p>
+                    <p class="note">Vous organisez des tournois réguliers dans un établissement ? <a class="link" href="{{ path('app_register') }}">Créez un compte organisateur</a> pour une page publique et un classement de saison.</p>
+                {% endif %}
             </div>
 
             <form class="card card--double form" method="post" novalidate>
                 {% if errors %}<p class="flash flash--error" role="alert">Quelques champs sont à revoir.</p>{% endif %}
+                <input type="hidden" name="_token" value="{{ csrf_token('tournament') }}">
+
+                {% if organizer %}
+                    <div class="field">
+                        <label class="label" for="season">Saison</label>
+                        <select id="season" name="season">
+                            {% for s in organizer.seasons %}
+                                <option value="{{ s.id }}" {{ values.season == s.id ~ '' ? 'selected' }}>{{ s.name }}</option>
+                            {% endfor %}
+                            <option value="" {{ values.season == '' ? 'selected' }}>Hors saison (ne compte pas au classement)</option>
+                        </select>
+                        {{ f.error(errors, 'season') }}
+                    </div>
+                {% endif %}
 
                 <div class="field">
                     <label class="label" for="name">Nom du tournoi</label>

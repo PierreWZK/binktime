@@ -1569,6 +1569,260 @@ input[type='datetime-local']::-webkit-calendar-picker-indicator {
     }
 }
 
+/* ---------- Comptes et établissements ---------- */
+
+.badge--link {
+    transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.badge--link:hover {
+    border-color: var(--or);
+    color: var(--or-clair);
+}
+
+.form--narrow {
+    max-width: 520px;
+}
+
+.field-row--2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.label small {
+    letter-spacing: 0.05em;
+    text-transform: none;
+}
+
+select {
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, var(--or) 50%), linear-gradient(135deg, var(--or) 50%, transparent 50%);
+    background-position: calc(100% - 20px) 50%, calc(100% - 15px) 50%;
+    background-size: 5px 5px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+
+.check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--pierre);
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.check input {
+    width: 18px;
+    min-height: 18px;
+    accent-color: var(--or);
+}
+
+.event-list,
+.season-list,
+.venue__events,
+.venue-grid {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.event {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--filet-neutre);
+}
+
+.event__date {
+    display: grid;
+    color: var(--taupe);
+    font-size: 11px;
+    line-height: 1.2;
+}
+
+.event__date b {
+    color: var(--or);
+    font: 400 30px/1 var(--serif);
+}
+
+.event__name {
+    display: grid;
+    color: var(--ivoire);
+    font-size: 15px;
+}
+
+.event__name small {
+    color: var(--taupe);
+    font-size: 11px;
+}
+
+.event__actions {
+    display: flex;
+    gap: 6px;
+}
+
+.event__actions .chip {
+    display: inline-flex;
+    align-items: center;
+}
+
+.event__winner {
+    color: var(--ivoire);
+    font: italic 400 20px/1.2 var(--serif);
+    text-align: right;
+}
+
+.event__winner .label {
+    display: block;
+    font: 500 10px/1.4 var(--sans);
+    font-style: normal;
+}
+
+.season-list li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--filet-neutre);
+}
+
+.season-list a {
+    color: var(--ivoire);
+    font: 400 19px/1.2 var(--serif);
+}
+
+.season-list a:hover {
+    color: var(--or);
+}
+
+.season-list small {
+    color: var(--taupe);
+    font-size: 11px;
+}
+
+.venue__title {
+    max-width: 14em;
+}
+
+.venue__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 56px;
+    margin: 40px 0 0;
+    padding-top: 28px;
+    border-top: 1px solid var(--filet);
+}
+
+.venue__facts dd {
+    margin: 8px 0 0;
+    color: var(--ivoire);
+    font: 400 30px/1 var(--serif);
+}
+
+.venue__events {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.venue__event {
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    gap: 14px;
+}
+
+.venue__event p {
+    margin: 0;
+    color: var(--taupe);
+    font-size: 13px;
+}
+
+.venue__subtitle {
+    margin: clamp(48px, 7vw, 80px) 0 12px;
+}
+
+.season-switch {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.season-switch .chip {
+    display: inline-flex;
+    align-items: center;
+}
+
+.standings {
+    padding-top: 8px;
+}
+
+.standings__table {
+    min-width: 560px;
+}
+
+.standings__name {
+    color: var(--ivoire);
+}
+
+.standings__pts {
+    color: var(--ivoire);
+    font-size: 22px;
+}
+
+.venue-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.venue-card {
+    display: grid;
+    gap: 12px;
+    justify-items: start;
+    height: 100%;
+    transition: border-color 0.3s var(--ease), background-color 0.3s var(--ease);
+}
+
+.venue-card:hover {
+    border-color: var(--or);
+    background: var(--ebene);
+}
+
+.venue-card .roman {
+    font-size: 26px;
+}
+
+.venue-card__name {
+    color: var(--ivoire);
+    font: 400 28px/1.1 var(--serif);
+}
+
+.venue-card__meta {
+    color: var(--taupe);
+    font-size: 13px;
+}
+
+@media (max-width: 640px) {
+    .field-row--2 {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .event {
+        grid-template-columns: 52px minmax(0, 1fr);
+    }
+
+    .event > .badge,
+    .event__actions,
+    .event__winner {
+        grid-column: 2;
+        justify-self: start;
+        text-align: left;
+    }
+}
+
 /* ---------- Horloge plein écran ---------- */
 
 .clock-page {

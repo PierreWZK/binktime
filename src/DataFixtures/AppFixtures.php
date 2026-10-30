@@ -9,17 +9,24 @@ use App\Entity\Tournament;
 use App\Poker\BlindTemplates;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /** Un établissement avec une saison (3 tournois terminés, 1 en cours) et un tournoi à la maison. */
 class AppFixtures extends Fixture
 {
     private const PLAYERS = ['Camille', 'Hugo', 'Inès', 'Léo', 'Manon', 'Nathan', 'Sarah', 'Théo', 'Yasmine', 'Louis', 'Jade', 'Rayan'];
 
+    public function __construct(private readonly UserPasswordHasherInterface $hasher)
+    {
+    }
+
     public function load(ObjectManager $manager): void
     {
         mt_srand(17);
 
-        $organizer = (new Organizer('Le Cercle du Losange', 'le-cercle-du-losange'))->setCity('Lyon');
+        // Compte de démo, pour tester l'espace organisateur en local
+        $organizer = (new Organizer('Le Cercle du Losange', 'le-cercle-du-losange'))->setCity('Lyon')->setEmail('demo@binktime.test');
+        $organizer->setPassword($this->hasher->hashPassword($organizer, 'demo-binktime-17'));
         $season = new Season($organizer, 'Saison d\'automne 2026');
         $manager->persist($organizer);
         $manager->persist($season);

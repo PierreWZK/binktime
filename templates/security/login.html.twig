@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion · BinkTime{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+
+{% block body %}
+    <section class="section section--tight">
+        <div class="wrap form-layout">
+            <div class="form-intro">
+                <p class="kicker label label--or">Espace organisateur</p>
+                <h1 class="h2">Bon retour <span class="chute">à la table.</span></h1>
+                <p class="lead">Retrouvez vos saisons, vos tournois et le classement de votre établissement.</p>
+                <p class="note">Pas encore de compte ? <a class="link" href="{{ path('app_register') }}">Inscrire mon établissement</a></p>
+            </div>
+
+            <form class="card card--double form form--narrow" method="post" action="{{ path('app_login') }}">
+                {% if error %}
+                    <p class="flash flash--error" role="alert">{{ error.messageKey starts with 'Too many' ?'Trop d\'essais : réessayez dans une minute.' : 'E-mail ou mot de passe incorrect.' }}</p>
+                {% endif %}
+                <div class="field">
+                    <label class="label" for="email">E-mail</label>
+                    <input id="email" name="email" type="email" value="{{ email }}" autocomplete="email" required autofocus>
+                </div>
+                <div class="field">
+                    <label class="label" for="password">Mot de passe</label>
+                    <input id="password" name="password" type="password" autocomplete="current-password" required>
+                </div>
+                <label class="check"><input type="checkbox" name="_remember_me"> Rester connecté sur cet appareil</label>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <button class="btn btn--or form__submit" type="submit">Se connecter</button>
+            </form>
+        </div>
+    </section>
+{% endblock %}

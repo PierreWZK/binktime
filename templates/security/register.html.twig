@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscrire mon établissement · BinkTime{% endblock %}
+
+{% macro error(errors, field) %}
+    {% if errors[field] is defined %}<p class="field__error" id="{{ field }}-error">{{ errors[field] }}</p>{% endif %}
+{% endmacro %}
+
+{% block body %}
+    {% import _self as f %}
+    <section class="section section--tight">
+        <div class="wrap form-layout">
+            <div class="form-intro">
+                <p class="kicker label label--or">Établissements</p>
+                <h1 class="h2">Votre salle, <span class="chute">votre saison.</span></h1>
+                <p class="lead">Un bar, un club, un cercle de jeu : vos tournois réguliers, une page publique pour vos joueurs et un classement de saison qui se met à jour à chaque tournoi terminé.</p>
+                <p class="note">Déjà inscrit ? <a class="link" href="{{ path('app_login') }}">Se connecter</a> · Une partie à la maison ? <a class="link" href="{{ path('tournament_new') }}">Pas besoin de compte</a></p>
+            </div>
+
+            <form class="card card--double form" method="post" novalidate>
+                {% if errors %}<p class="flash flash--error" role="alert">Quelques champs sont à revoir.</p>{% endif %}
+                <div class="field-row field-row--2">
+                    <div class="field">
+                        <label class="label" for="name">Nom de l'établissement</label>
+                        <input id="name" name="name" value="{{ values.name }}" maxlength="80" placeholder="Le Cercle du Losange" required autofocus {% if errors.name is defined %}aria-invalid="true" aria-describedby="name-error"{% endif %}>
+                        {{ f.error(errors, 'name') }}
+                    </div>
+                    <div class="field">
+                        <label class="label" for="city">Ville <small>(facultatif)</small></label>
+                        <input id="city" name="city" value="{{ values.city }}" maxlength="80" placeholder="Lyon" {% if errors.city is defined %}aria-invalid="true"{% endif %}>
+                        {{ f.error(errors, 'city') }}
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label" for="email">E-mail</label>
+                    <input id="email" name="email" type="email" value="{{ values.email }}" autocomplete="email" required {% if errors.email is defined %}aria-invalid="true" aria-describedby="email-error"{% endif %}>
+                    {{ f.error(errors, 'email') }}
+                </div>
+                <div class="field">
+                    <label class="label" for="password">Mot de passe</label>
+                    <input id="password" name="password" type="password" autocomplete="new-password" minlength="10" required aria-describedby="password-hint{% if errors.password is defined %} password-error{% endif %}" {% if errors.password is defined %}aria-invalid="true"{% endif %}>
+                    <p class="field__hint" id="password-hint">10 caractères au moins.</p>
+                    {{ f.error(errors, 'password') }}
+                </div>
+                <input type="hidden" name="_token" value="{{ csrf_token('register') }}">
+                <button class="btn btn--or form__submit" type="submit">Créer le compte <span aria-hidden="true">→</span></button>
+            </form>
+        </div>
+    </section>
+{% endblock %}

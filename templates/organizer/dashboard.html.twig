@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon espace · {{ o.name }} · BinkTime{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+
+{% set statusLabel = {draft: 'À venir', running: 'En cours', paused: 'En pause', finished: 'Terminé'} %}
+
+{% block body %}
+    <section class="section section--tight">
+        <div class="wrap admin">
+            <header class="admin__head">
+                <div>
+                    <p class="kicker label label--or">Espace organisateur</p>
+                    <h1 class="h2">{{ o.name }}</h1>
+                    <p class="admin__meta">
+                        {% if o.city %}<span>{{ o.city }}</span>{% endif %}
+                        <a class="link" href="{{ path('organizer_show', {slug: o.slug}) }}">Voir la page publique</a>
+                        <a class="link" href="{{ path('app_logout') }}">Se déconnecter</a>
+                    </p>
+                </div>
+                <a class="btn btn--or" href="{{ path('tournament_new') }}">Nouveau tournoi <span aria-hidden="true">→</span></a>
+            </header>
+
+            {% include '_flashes.html.twig' %}
+
+            <div class="admin__grid">
+                <div class="card">
+                    <div class="card__head">
+                        <h2 class="h3 card__title">Tournois</h2>
+                        <span class="label">{{ o.tournaments|length }} au total</span>
+                    </div>
+                    {% if o.tournaments is empty %}
+                        <p class="empty">Aucun tournoi pour l'instant. Le premier vous attend.</p>
+                    {% else %}
+                        <ol class="event-list">
+                            {% for t in o.tournaments %}
+                                <li class="event">
+                                    <span class="event__date"><b class="num">{{ t.startsAt|date('d') }}</b>{{ t.startsAt|date('m/Y') }}</span>
+                                    <span class="event__name">
+                                        {{ t.name }}
+                                        <small>{{ t.season ? t.season.name : 'Hors saison' }} · {{ t.entries|length }} joueur{{ t.entries|length > 1 ? 's' }}</small>
+                                    </span>
+                                    <span class="badge {{ t.status == 'running' ? 'badge--point' }} {{ t.status in ['paused', 'finished'] ? 'badge--point badge--pause' }}">{{ statusLabel[t.status] }}</span>
+                                    <span class="event__actions">
+                                        <a class="chip chip--or" href="{{ path('tournament_admin', {token: t.adminToken}) }}">Piloter</a>
+                                        {% if not t.finished %}<a class="chip" href="{{ path('clock_remote', {token: t.adminToken}) }}">Horloge</a>{% endif %}
+                                    </span>
+                                </li>
+                            {% endfor %}
+                        </ol>
+                    {% endif %}
+                </div>
+
+                <aside class="admin__side">
+                    <div class="card">
+                        <div class="card__head">
+                            <h2 class="h3 card__title">Saisons</h2>
+                            <span class="label">Points par place</span>
+                        </div>
+                        {% if o.seasons is empty %}
+                            <p class="empty">Créez une saison : chaque tournoi terminé qui y est rattaché alimente le classement.</p>
+                        {% else %}
+                            <ul class="season-list">
+                                {% for s in o.seasons %}
+                                    <li>
+                                        <a href="{{ path('organizer_show', {slug: o.slug, saison: s.id}) }}">{{ s.name }}</a>
+                                        <small>{{ s.tournaments|filter(t => t.finished)|length }} / {{ s.tournaments|length }} terminé{{ s.tournaments|length > 1 ? 's' }}</small>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <form class="payouts-form" method="post" action="{{ path('organizer_season_new') }}">
+                            <label class="label" for="season-name">Nouvelle saison</label>
+                            <div class="secret__row">
+                                <input id="season-name" name="name" maxlength="80" placeholder="Saison d'hiver 2027" required>
+                                <button class="btn btn--ligne btn--sm" type="submit">Créer</button>
+                            </div>
+                            <input type="hidden" name="_token" value="{{ csrf_token('season') }}">
+                        </form>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </section>
+{% endblock %}

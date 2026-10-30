@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Entry;
+use App\Entity\Organizer;
+use App\Entity\Season;
 use App\Entity\Tournament;
 use App\Poker\BlindTemplates;
 use App\Poker\Payout;
@@ -26,17 +28,40 @@ final class TournamentController extends AbstractController
     #[Route('/tournoi/nouveau', name: 'tournament_new', methods: ['GET', 'POST'])]
     public function new(Request $request): Response
     {
+        // Connecté : le tournoi appartient à l'établissement et peut compter pour une saison
+        $organizer = $this->getUser();
+        $organizer = $organizer instanceof Organizer ? $organizer : null;
+
         $values = ['name' => '', 'startsAt' => (new \DateTimeImmutable('today 20:30'))->format('Y-m-d\TH:i'), 'template' => 'classique',
-            'buyIn' => 20, 'rebuyPrice' => 0, 'addonPrice' => 0, 'payouts' => '50 / 30 / 20'];
+            'buyIn' => 20, 'rebuyPrice' => 0, 'addonPrice' => 0, 'payouts' => '50 / 30 / 20',
+            'season' => (string) $organizer?->getCurrentSeason()?->getId()];
         $errors = [];
 
         if ($request->isMethod('POST')) {
-            $values = array_merge($values, array_map('trim', $request->request->all()));
+            if (!$this->isCsrfTokenValid('tournament', (string) $request->request->get('_token'))) {
+                throw $this->createAccessDeniedException('Jeton de sécurité invalide, rechargez la page.');
+            }
+            foreach (array_keys($values) as $field) {
+                $values[$field] = trim((string) $request->request->get($field, ''));
+            }
             [$tournament, $errors] = $this->build($values);
+
+            // Seules les saisons de l'établissement connecté sont acceptées
+            $season = null;
+            if ($organizer && '' !== $values['season']) {
+                $season = $organizer->getSeasons()->findFirst(fn ($k, Season $s) => (string) $s->getId() === $values['season']);
+                if (null === $season) {
+                    $errors['season'] = 'Saison inconnue.';
+                }
+            }
+
             if (!$errors) {
+                $tournament->setOrganizer($organizer)->setSeason($season);
                 $this->em->persist($tournament);
                 $this->em->flush();
-                $this->addFlash('success', 'Tournoi créé. Gardez bien ce lien : c\'est lui qui permet de piloter le tournoi.');
+                $this->addFlash('success', $organizer
+                    ? 'Tournoi créé. Vous le retrouvez dans votre espace.'
+                    : 'Tournoi créé. Gardez bien ce lien : c\'est lui qui permet de piloter le tournoi.');
 
                 return $this->redirectToRoute('tournament_admin', ['token' => $tournament->getAdminToken()]);
             }
@@ -46,6 +71,7 @@ final class TournamentController extends AbstractController
             'values' => $values,
             'errors' => $errors,
             'templates' => BlindTemplates::TEMPLATES,
+            'organizer' => $organizer,
         ], new Response(status: $errors ? 422 : 200));
     }
 

@@ -32,9 +32,7 @@
                 </div>
             </header>
 
-            {% for type, messages in app.flashes %}
-                {% for message in messages %}<p class="flash flash--{{ type }}" role="status">{{ message }}</p>{% endfor %}
-            {% endfor %}
+            {% include '_flashes.html.twig' %}
 
             {% if t.finished %}
                 {% set winner = t.standings|filter(e => e.finishPosition == 1)|first %}

@@ -7,6 +7,7 @@ use App\Poker\BlindTemplates;
 use App\Poker\Payout;
 use App\Poker\SeasonStandings;
 use App\Repository\SeasonRepository;
+use App\Repository\TournamentRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -14,7 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class HomeController extends AbstractController
 {
     #[Route('/', name: 'home')]
-    public function index(SeasonRepository $seasons): Response
+    public function index(SeasonRepository $seasons, TournamentRepository $tournaments): Response
     {
         // Classement de la saison la plus récente d'un établissement, s'il y en a une
         $season = $seasons->findOneBy([], ['createdAt' => 'DESC']);
@@ -28,6 +29,9 @@ final class HomeController extends AbstractController
             'standings' => $season ? array_slice(SeasonStandings::compute($season), 0, 5) : [],
             'prizes' => Payout::split(12 * 20, [50, 30, 20]),
             'levels' => array_slice($example->getLevels()->toArray(), 5, 7),
+            // « Voir l'horloge » mène au tournoi d'établissement en cours, s'il y en a un
+            // (jamais un tournoi à la maison : son horloge reste privée)
+            'live' => $season ? $tournaments->findOneBy(['status' => [Tournament::RUNNING, Tournament::PAUSED], 'organizer' => $season->getOrganizer()]) : null,
         ]);
     }
 }

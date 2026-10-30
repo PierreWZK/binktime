@@ -1,0 +1,105 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ o.name }}{{ o.city ? ' · ' ~ o.city }} · Tournois et classement · BinkTime{% endblock %}
+{% block description %}Tournois de poker de {{ o.name }}{{ o.city ? ' (' ~ o.city ~ ')' }} : prochaines dates, horloge en direct et classement de la saison.{% endblock %}
+
+{% block body %}
+    {% set live = o.tournaments|filter(t => t.status in ['running', 'paused']) %}
+    {% set upcoming = o.tournaments|filter(t => t.status == 'draft')|reverse %}
+    {% set results = (season ? season.tournaments : o.tournaments)|filter(t => t.finished)|reverse %}
+
+    <section class="section section--tight">
+        <div class="wrap">
+            <p class="kicker label label--or">Établissement{{ o.city ? ' · ' ~ o.city }}</p>
+            <h1 class="h1 venue__title">{{ o.name }}</h1>
+            <dl class="venue__facts">
+                <div><dt class="label">Tournois joués</dt><dd class="num">{{ o.tournaments|filter(t => t.finished)|length }}</dd></div>
+                <div><dt class="label">Saison</dt><dd>{{ season ? season.name : '—' }}</dd></div>
+                <div><dt class="label">Joueurs classés</dt><dd class="num">{{ standings|length }}</dd></div>
+            </dl>
+        </div>
+    </section>
+
+    {% if live is not empty or upcoming is not empty %}
+        <section class="section section--ebene section--tight">
+            <div class="wrap">
+                <p class="kicker label label--or">À l'affiche</p>
+                <ul class="venue__events">
+                    {% for t in live %}
+                        <li class="card card--double venue__event is-live">
+                            <span class="badge badge--point{{ t.status == 'paused' ? ' badge--pause' }}">{{ t.status == 'running' ? 'En cours' : 'En pause' }}</span>
+                            <h2 class="h3">{{ t.name }}</h2>
+                            {% set level = t.levelAt(t.currentLevel) %}
+                            <p>{{ level.break ? 'Pause' : 'Niveau ' ~ t.levelNumber(level)|roman ~ ' · ' ~ level.smallBlind|chips ~ ' / ' ~ level.bigBlind|chips }} · {{ t.playersLeft }} joueurs sur {{ t.entries|length }}</p>
+                            <a class="btn btn--or btn--sm" href="{{ path('clock_public', {token: t.publicToken}) }}">Suivre l'horloge</a>
+                        </li>
+                    {% endfor %}
+                    {% for t in upcoming %}
+                        <li class="card venue__event">
+                            <span class="badge">À venir</span>
+                            <h2 class="h3">{{ t.name }}</h2>
+                            <p>{{ t.startsAt|date('d/m/Y · H\\hi') }} · buy-in {{ t.buyIn }} €{{ t.rebuyPrice ? ' · recaves' }}</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </section>
+    {% endif %}
+
+    <section class="section">
+        <div class="wrap">
+            <div class="split-head">
+                <div>
+                    <p class="kicker label label--or">Classement de la saison</p>
+                    <h2 class="h2">{{ season ? season.name : 'Pas encore de saison' }}</h2>
+                </div>
+                {% if o.seasons|length > 1 %}
+                    <nav class="season-switch" aria-label="Autres saisons">
+                        {% for s in o.seasons %}
+                            <a class="chip{{ s == season ? ' chip--or' }}" href="{{ path('organizer_show', {slug: o.slug, saison: s.id}) }}" {{ s == season ? 'aria-current="page"' }}>{{ s.name }}</a>
+                        {% endfor %}
+                    </nav>
+                {% endif %}
+            </div>
+
+            <div class="card standings">
+                {% if standings is empty %}
+                    <p class="empty">Le classement s'écrit au premier tournoi terminé.</p>
+                {% else %}
+                    <div class="table-scroll">
+                        <table class="table standings__table">
+                            <thead><tr><th>Rang</th><th>Joueur</th><th>Tournois</th><th>Victoires</th><th>Gains</th><th>Points</th></tr></thead>
+                            <tbody>
+                                {% for row in standings %}
+                                    <tr{% if loop.first %} class="is-active"{% endif %}>
+                                        <td><span class="roman">{{ '%02d'|format(loop.index) }}</span></td>
+                                        <td class="standings__name">{{ row.name }}</td>
+                                        <td>{{ row.tournaments }}</td>
+                                        <td>{{ row.wins }}</td>
+                                        <td>{{ row.winnings }} €</td>
+                                        <td class="standings__pts num">{{ row.points }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="note">Points = joueurs − place + 1, doublés dans l'argent. Égalité : victoires, puis meilleure place.</p>
+                {% endif %}
+            </div>
+
+            {% if results is not empty %}
+                <h2 class="h3 venue__subtitle">Résultats</h2>
+                <ol class="event-list">
+                    {% for t in results %}
+                        {% set winner = t.standings|filter(e => e.finishPosition == 1)|first %}
+                        <li class="event">
+                            <span class="event__date"><b class="num">{{ t.startsAt|date('d') }}</b>{{ t.startsAt|date('m/Y') }}</span>
+                            <span class="event__name">{{ t.name }}<small>{{ t.entries|length }} joueurs · {{ t.prizePool }} € de cagnotte</small></span>
+                            <span class="event__winner"><span class="label">Vainqueur</span> {{ winner ? winner.playerName : '—' }}</span>
+                        </li>
+                    {% endfor %}
+                </ol>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}
