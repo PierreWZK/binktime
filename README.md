@@ -1,8 +1,14 @@
 # BinkTime · Vos tournois de poker, réglés comme une horloge
 
-> Jour 17 du défi **30 jours, 30 projets** · Symfony · Twig · MySQL · **https://binktime.projectp.fr**
+🌐 **[binktime.projectp.fr](https://binktime.projectp.fr/)** · Jour 17 du défi **[30 jours, 30 projets](https://projectp.fr/)** · [Dépôt du défi](https://github.com/PierreWZK/30DaysProjects)
 
-![BinkTime, la page d'accueil](docs/preview.png)
+Stack : Symfony, Twig, MySQL.
+
+[![BinkTime, la page d'accueil](docs/preview-accueil.png)](https://binktime.projectp.fr/)
+
+<p align="center">
+  <img src="docs/preview-mobile.png" alt="BinkTime sur téléphone" width="260">
+</p>
 
 Un gestionnaire de tournois de poker entre amis ou en club : inscriptions, structure des blindes, **horloge** plein écran pilotée depuis un téléphone, éliminations, recaves et calcul des gains. **BinkTime** tient aussi le classement de la saison.
 
@@ -71,3 +77,14 @@ Symfony 7.4 LTS · Twig · AssetMapper (sans build front) · Doctrine (SQLite en
 - **Indexation** : `robots.txt`, `sitemap.xml`, balise canonical, données structurées JSON-LD (`WebApplication` rattachée à ProjectP) et lien « 30 jours, 30 projets » vers https://projectp.fr/ dans le pied de page. Vérifier en ligne, puis me rappeler de soumettre `https://binktime.projectp.fr/sitemap.xml` dans Google Search Console.
 - **Aperçu du lien** : image Open Graph stylisée 1200 × 630 aux couleurs du projet et balises `og:*` / `twitter:card`, vérifiées en ligne.
 - **Vitrine** : la mise à jour de `30days30projects` (README et `projects.js`) se fait **après ma validation**.
+
+---
+
+## Le défi 30 jours, 30 projets
+
+Un projet complet par jour pendant 30 jours, chacun en ligne sur son propre sous-domaine.
+
+- 🗂️ **Tous les projets** : [projectp.fr](https://projectp.fr/)
+- 💻 **Le dépôt du défi** : [github.com/PierreWZK/30DaysProjects](https://github.com/PierreWZK/30DaysProjects)
+- ⬅️ **Jour précédent** : [Dépêche, actu dev et gaming](https://depeche.projectp.fr/)
+- ➡️ **Jour suivant** : [Rituel, kanban](https://rituel.projectp.fr/)
